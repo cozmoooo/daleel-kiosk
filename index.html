@@ -1,0 +1,1755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Daleel Hajj Kiosk</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600;700&family=Reem+Kufi:wght@500;600;700&family=Noto+Naskh+Arabic:wght@400;600;700&family=Noto+Sans+SC:wght@400;600;700&family=Noto+Sans+Bengali:wght@400;600;700&family=Noto+Sans:wght@400;600;700&family=Atkinson+Hyperlegible:wght@400;700&family=Noto+Kufi+Arabic:wght@400;600;700&family=Alexandria:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: presentation page — copy and journey steps on the left, a life-size-proportioned
+   kiosk totem on the right running the real interface; kiosk mode (#kiosk) shows only the screen. */
+:root{
+  color-scheme: dark;
+  /* showcase */
+  --bg:#0C0B10; --panel:#15131B; --line:rgba(237,233,242,.10); --fg:#EDE9F2; --muted:#A39DAE;
+  --gold:#D9B46A; --violet:#9B6BFF; --cyan:#3EE6FF;
+  --display:'Reem Kufi','Readex Pro',system-ui,sans-serif;
+  --ui:'Readex Pro','Noto Naskh Arabic','Noto Sans Bengali','Noto Sans SC','Noto Sans',system-ui,sans-serif;
+  /* kiosk screen */
+  --k-ink:#071A17; --k-emerald:#0E3B33; --k-jade:#1E7A66; --k-gold:#D9B46A; --k-gold-2:#E8C987;
+  --k-sand:#F3E9D2; --k-ihram:#FBF8F1; --k-red:#E5484D; --k-sky:#5CC8FF; --k-text:#0B231F;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--fg)}
+body{font-family:var(--ui);margin:0;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+button:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.minw0{min-width:0}
+
+/* ═══════════ SHOWCASE PAGE ═══════════ */
+.wrap{max-width:1320px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:22px}
+.mark{display:flex;align-items:center;gap:12px;font-family:var(--display);font-size:22px;letter-spacing:.02em}
+.mark small{font-family:var(--ui);font-size:12px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;display:block;margin-top:2px}
+.proto{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(217,180,106,.35);padding:7px 14px;border-radius:999px;white-space:nowrap}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:56px;align-items:start;padding-block:8px 56px}
+.copy{max-width:560px}
+.eyebrow{font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+h1.title{font-family:var(--display);font-weight:600;font-size:clamp(40px,5.2vw,70px);line-height:1.04;margin:14px 0 18px;text-wrap:balance}
+h1.title em{font-style:normal;color:var(--gold)}
+.lead{font-size:18px;line-height:1.65;color:var(--muted);max-width:52ch;margin:0}
+.steps-h{margin:34px 0 10px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.steps{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.steps button{width:100%;display:grid;grid-template-columns:30px minmax(0,1fr) auto;align-items:center;gap:14px;padding:11px 4px;border-bottom:1px solid var(--line);text-align:start;color:var(--muted);transition:color .2s}
+.steps button:hover{color:var(--fg)}
+.steps .n{width:26px;height:26px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:12px;font-variant-numeric:tabular-nums}
+.steps .lbl{font-size:16px}
+.steps .sub{font-size:13px;opacity:.7}
+.steps button.on{color:var(--fg)}
+.steps button.on .n{background:var(--gold);border-color:var(--gold);color:#1A1408;font-weight:700}
+.langs-h{margin:26px 0 10px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.langs{display:flex;flex-wrap:wrap;gap:8px}
+.langs button{padding:8px 14px;border-radius:999px;border:1px solid var(--line);font-size:14px;color:var(--muted)}
+.langs button.on{border-color:var(--gold);color:var(--gold)}
+.cta-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px;margin-top:26px}
+.btn-demo{display:inline-flex;align-items:center;gap:10px;padding:14px 22px;border-radius:14px;background:var(--gold);color:#1A1408;font-size:16px;font-weight:600}
+.btn-demo:hover{filter:brightness(1.07)}
+.cta-row > span{font-size:14px;color:var(--muted)}
+.tip{margin-top:20px;font-size:13px;color:var(--muted);display:flex;gap:8px;align-items:center}
+.showcase{overflow-x:clip}
+.kcol{display:flex;justify-content:center;min-width:0;position:sticky;top:8px;align-self:start}
+.fit{position:relative}
+.feat{padding-block:28px 64px;border-top:1px solid var(--line)}
+.feat h2{font-family:var(--display);font-weight:600;font-size:clamp(28px,3vw,40px);margin:28px 0 8px;text-wrap:balance}
+.feat > p{color:var(--muted);margin:0 0 30px;max-width:60ch;line-height:1.6}
+.fgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:36px 40px}
+.fi{min-width:0}
+.fi svg{color:var(--gold)}
+.fi h3{font-size:18px;font-weight:600;margin:12px 0 6px}
+.fi p{color:var(--muted);line-height:1.6;margin:0;font-size:15px}
+.specs{margin-top:44px;display:flex;flex-wrap:wrap;gap:10px 28px;color:var(--muted);font-size:14px;padding-top:22px;border-top:1px solid var(--line)}
+.specs span{display:flex;align-items:center;gap:8px}
+.specs span::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+.foot{padding-block:22px 40px;color:var(--muted);font-size:13px;display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between;border-top:1px solid var(--line)}
+.foot code{color:var(--fg);background:var(--panel);padding:2px 6px;border-radius:6px}
+@media (max-width:980px){
+  .hero{grid-template-columns:minmax(0,1fr);gap:36px}
+  .kcol{order:-1;position:static}
+  .copy{max-width:none}
+  .fgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:600px){ .fgrid{grid-template-columns:minmax(0,1fr)} .proto{display:none} .steps .sub{display:none} .steps button{grid-template-columns:30px minmax(0,1fr)} }
+
+/* ═══════════ TOTEM (built to match the kiosk photo) ═══════════ */
+.totem{position:absolute;left:0;top:0;width:660px;height:1380px;transform-origin:0 0}
+.t-aura{position:absolute;inset:-60px -160px 40px -120px;pointer-events:none;
+  background:
+   radial-gradient(40% 30% at 82% 26%, rgba(155,107,255,.30), transparent 70%),
+   radial-gradient(38% 30% at 84% 72%, rgba(62,230,255,.22), transparent 70%),
+   radial-gradient(50% 40% at 40% 55%, rgba(217,180,106,.08), transparent 70%)}
+.t-floor{position:absolute;left:-40px;right:-40px;top:1290px;height:120px;border-radius:50%;
+  background:radial-gradient(50% 50% at 50% 40%, rgba(0,0,0,.75), transparent 70%)}
+.t-side{position:absolute;left:600px;top:26px;width:44px;height:1226px;border-radius:0 34px 10px 0;
+  background:linear-gradient(90deg,#101114,#1d1e23 55%,#121316);box-shadow:inset -2px 0 0 rgba(255,255,255,.04)}
+.led{position:absolute;left:20px;width:5px;border-radius:4px}
+.led.p{top:150px;height:430px;background:#C08BFF;box-shadow:0 0 10px 2px rgba(176,120,255,.9),0 0 46px 10px rgba(155,107,255,.45)}
+.led.c{top:660px;height:520px;background:#7CF1FF;box-shadow:0 0 10px 2px rgba(62,230,255,.9),0 0 46px 10px rgba(62,230,255,.4)}
+.t-body{position:absolute;left:0;top:0;width:608px;height:1262px;border-radius:44px 44px 16px 16px;
+  background:linear-gradient(90deg,#1a1b1f 0%,#2c2d32 14%,#25262b 55%,#1c1d21 100%);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.09),inset 2px 0 0 rgba(255,255,255,.05),0 50px 90px -30px rgba(0,0,0,.9)}
+.t-cam{position:absolute;top:22px;left:50%;transform:translateX(-50%);width:84px;height:16px;border-radius:10px;background:#09090b;box-shadow:inset 0 1px 2px rgba(0,0,0,.8)}
+.t-cam::after{content:"";position:absolute;left:36px;top:3px;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#3a4a6a,#0b0d14 60%)}
+.t-bezel{position:absolute;top:58px;left:26px;width:556px;height:976px;border-radius:14px;background:#040405;padding:8px;box-shadow:0 0 0 1px rgba(255,255,255,.06)}
+.t-glare{position:absolute;inset:8px;border-radius:6px;pointer-events:none;z-index:50;background:linear-gradient(118deg,rgba(255,255,255,.07) 0%,rgba(255,255,255,0) 30%)}
+.t-slot{position:absolute;top:1072px;left:114px;width:380px;height:44px;border-radius:10px;background:#060607;box-shadow:inset 0 3px 8px rgba(0,0,0,.9),0 1px 0 rgba(255,255,255,.06)}
+.t-slot::after{content:"";position:absolute;left:12%;right:12%;top:20px;height:3px;border-radius:2px;background:#7CF1FF;box-shadow:0 0 12px 2px rgba(62,230,255,.7);animation:slotglow 2.4s ease-in-out infinite}
+.t-slot-l{position:absolute;top:1124px;left:0;width:608px;text-align:center;font-size:12px;letter-spacing:.34em;color:#6D6E78}
+.t-word{position:absolute;top:1150px;left:0;width:608px;display:flex;justify-content:center;align-items:center;gap:14px;
+  font-family:var(--display);font-size:58px;color:#7CF1FF;text-shadow:0 0 18px rgba(62,230,255,.75),0 0 2px #fff}
+.t-word img{max-height:70px}
+.t-plinth{position:absolute;left:-26px;top:1252px;width:700px;height:72px;border-radius:12px 12px 8px 8px;
+  background:linear-gradient(180deg,#2d2e33,#16171a 70%);box-shadow:inset 0 2px 0 rgba(255,255,255,.08),0 30px 50px rgba(0,0,0,.7)}
+@keyframes slotglow{50%{opacity:.45}}
+
+/* ═══════════ KIOSK SCREEN (540×960 design px) ═══════════ */
+#app{width:540px;height:960px;position:relative;overflow:hidden;border-radius:6px;background:var(--k-ink);color:var(--k-ihram);
+  font-family:var(--ui);-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+#app{--tf:'Readex Pro';--ui:var(--tf),'Noto Naskh Arabic','Noto Sans Bengali','Noto Sans SC','Noto Sans',system-ui,sans-serif}
+#app[data-lang="ur"],#app[data-lang="fa"]{--ui:'Noto Naskh Arabic',var(--tf),'Noto Sans',system-ui,sans-serif}
+.k-view{position:absolute;inset:0}
+#app button{font-family:inherit}
+body.present{overflow:hidden;height:100%;background:radial-gradient(80% 80% at 50% 40%,#10302A,#04100E 70%)}
+body.kiosk{background:#000}
+body.present .showcase{display:none}
+body.present #app{position:fixed;left:50%;top:50%;transform-origin:center;border-radius:0;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.pv-bar{position:fixed;z-index:200;top:calc(14px + env(safe-area-inset-top,0px));right:calc(14px + env(safe-area-inset-right,0px));display:none;gap:8px;transition:opacity .4s}
+body.present:not(.kiosk) .pv-bar{display:flex}
+.pv-bar.idle{opacity:0}
+.pv-bar button{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:12px;background:rgba(12,11,16,.8);border:1px solid rgba(237,233,242,.18);color:var(--fg);font-size:14px;backdrop-filter:blur(8px)}
+
+.k-screen{position:absolute;inset:0;display:flex;flex-direction:column}
+.k-dark{background:radial-gradient(120% 65% at 50% 0%,#14503F 0%,#0A2924 46%,#071A17 100%);color:var(--k-ihram)}
+.k-light{background:var(--k-ihram);color:var(--k-text)}
+.k-pat{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;-webkit-mask-image:linear-gradient(#000,transparent 75%);mask-image:linear-gradient(#000,transparent 75%)}
+[dir="rtl"] .flip{transform:scaleX(-1)}
+#app.entering .k-in{animation:kin .45s cubic-bezier(.2,.8,.2,1) both}
+#app.entering .k-in:nth-child(2){animation-delay:.04s}
+#app.entering .k-in:nth-child(3){animation-delay:.08s}
+#app.entering .k-in:nth-child(4){animation-delay:.12s}
+#app.entering .k-in:nth-child(5){animation-delay:.16s}
+#app.entering .k-in:nth-child(6){animation-delay:.2s}
+@keyframes kin{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* status bar */
+.k-sb{height:56px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 22px;position:relative;z-index:6;
+  background:rgba(4,17,15,.82);color:rgba(251,248,241,.88);font-size:14px;border-bottom:1px solid rgba(217,180,106,.18)}
+.k-sb .l,.k-sb .r{display:flex;align-items:center;gap:7px;white-space:nowrap}
+.k-sb .c{position:absolute;left:50%;transform:translateX(-50%);color:var(--k-gold);font-size:13px;font-weight:500;white-space:nowrap}
+.k-sb .sep{width:1px;height:14px;background:rgba(251,248,241,.25);margin:0 4px}
+.k-sb .t{font-variant-numeric:tabular-nums}
+
+.k-pad{flex:1;display:flex;flex-direction:column;gap:16px;padding:22px 28px 26px;position:relative;min-height:0}
+.k-head{display:flex;align-items:center;gap:14px}
+.k-head h1{margin:0;font-size:26px;font-weight:700}
+.k-back{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;background:#fff;border:1px solid rgba(7,26,23,.12);color:var(--k-text);flex-shrink:0}
+.k-back.dark{background:rgba(251,248,241,.08);border-color:rgba(251,248,241,.16);color:var(--k-ihram)}
+.k-sec-h{display:flex;align-items:center;gap:8px;font-size:18px;font-weight:600;color:var(--k-text)}
+.k-sec-h.small{font-size:13px;letter-spacing:.12em;text-transform:uppercase;opacity:.6}
+[lang="ur"].k-sec-h.small,[lang="fa"] .k-sec-h.small{letter-spacing:0}
+
+/* ATTRACT */
+.k-att{flex:1;display:flex;flex-direction:column;align-items:center;padding:22px 30px 0;gap:14px;position:relative;text-align:center}
+.k-brand{display:flex;align-items:center;gap:14px}
+.k-brand svg{color:var(--k-gold)}
+.k-word{font-family:'Reem Kufi',var(--ui);font-size:42px;line-height:1;color:var(--k-gold-2)}
+.k-word-l{font-size:11px;letter-spacing:.38em;opacity:.6;margin-top:6px}
+.k-rot{min-height:132px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.k-rot h1{margin:0;font-size:29px;font-weight:600;line-height:1.3;text-wrap:balance}
+.k-rot p{margin:0;font-size:16px;line-height:1.55;opacity:.68;max-width:400px}
+.k-fade{animation:kfade .5s ease-out both}
+@keyframes kfade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.k-portal{position:relative;width:296px;height:296px;flex-shrink:0;border-radius:50%}
+.k-rings{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.k-rings polygon,.k-rings circle{fill:none;transform-box:fill-box;transform-origin:center}
+.k-rings .r1{stroke:rgba(217,180,106,.55);stroke-width:1.4;animation:spin 40s linear infinite}
+.k-rings .r2{stroke:rgba(217,180,106,.28);stroke-width:1;animation:spin 28s linear infinite reverse}
+.k-rings .r3{stroke:rgba(232,201,135,.85);stroke-width:2;stroke-dasharray:60 593;stroke-linecap:round;animation:spin 6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.k-win{position:absolute;left:50%;top:50%;width:184px;height:184px;transform:translate(-50%,-50%);border-radius:26px;
+  background:linear-gradient(160deg,rgba(251,248,241,.10),rgba(251,248,241,.03));border:1px solid rgba(217,180,106,.35);
+  box-shadow:0 0 40px rgba(217,180,106,.18),inset 0 0 30px rgba(217,180,106,.08);overflow:hidden}
+.k-win .qrg{position:absolute;inset:38px;color:rgba(251,248,241,.16)}
+.k-cn{position:absolute;width:34px;height:34px;border:3px solid var(--k-gold-2)}
+.k-cn.a{top:12px;left:12px;border-right:0;border-bottom:0;border-radius:12px 0 0 0}
+.k-cn.b{top:12px;right:12px;border-left:0;border-bottom:0;border-radius:0 12px 0 0}
+.k-cn.c{bottom:12px;left:12px;border-right:0;border-top:0;border-radius:0 0 0 12px}
+.k-cn.d{bottom:12px;right:12px;border-left:0;border-top:0;border-radius:0 0 12px 0}
+.k-laser{position:absolute;left:10%;right:10%;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,var(--k-gold-2),transparent);box-shadow:0 0 14px var(--k-gold-2);animation:laser 2.4s ease-in-out infinite}
+@keyframes laser{0%,100%{top:14%}50%{top:84%}}
+.k-ok{position:absolute;inset:0;display:grid;place-items:center;align-content:center;gap:14px}
+.k-ok .ring{width:86px;height:86px;border-radius:50%;background:var(--k-gold);display:grid;place-items:center;color:var(--k-ink);animation:pop .5s cubic-bezier(.3,1.6,.6,1) both}
+@keyframes pop{from{transform:scale(.3);opacity:0}to{transform:none;opacity:1}}
+.k-dots{display:flex;gap:9px;justify-content:center}
+.k-dots i{width:9px;height:9px;border-radius:50%;background:currentColor;animation:bounce 1s ease-in-out infinite}
+.k-dots i:nth-child(2){animation-delay:.15s}.k-dots i:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,80%,100%{transform:scale(.4);opacity:.3}40%{transform:none;opacity:1}}
+.k-scantext{min-height:0;gap:6px}
+.k-scantext h2{margin:0;font-size:26px;font-weight:700}
+.k-scantext p{font-size:15px}
+.k-demo{display:inline-flex;align-items:center;gap:6px;margin-top:6px;font-size:12.5px;color:var(--k-gold-2);background:rgba(217,180,106,.12);padding:5px 12px;border-radius:999px}
+.k-below{display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--k-gold-2);font-size:12.5px;letter-spacing:.08em;margin-top:auto;padding-bottom:4px}
+.k-chev{animation:chev 1.6s ease-in-out infinite;opacity:.9}
+.k-chev:nth-child(3){animation-delay:.2s;opacity:.5;margin-top:-14px}
+@keyframes chev{50%{transform:translateY(5px)}}
+.k-langs{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:12px 26px 24px;position:relative}
+.k-lp{padding:9px 16px;border-radius:999px;border:1px solid rgba(217,180,106,.3);font-size:15px;color:rgba(251,248,241,.8);transition:all .25s}
+.k-lp.on{background:var(--k-gold);border-color:var(--k-gold);color:var(--k-ink);font-weight:600}
+
+/* VERIFY */
+.k-okb{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:14px;background:rgba(30,122,102,.10);color:var(--k-jade);font-weight:600;font-size:16px}
+.k-okb i{width:28px;height:28px;border-radius:50%;background:var(--k-jade);color:#fff;display:grid;place-items:center}
+.k-id{position:relative;overflow:hidden;border-radius:26px;padding:22px 24px;color:var(--k-ihram);
+  background:linear-gradient(135deg,#124A40 0%,#0A2924 58%,#0E3B33 100%);box-shadow:0 18px 40px -16px rgba(7,26,23,.55);display:flex;flex-direction:column;gap:18px}
+.k-id::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:linear-gradient(90deg,var(--k-gold),var(--k-gold-2),var(--k-gold))}
+.k-id-wm{position:absolute;width:250px;height:250px;inset-inline-end:-70px;top:-60px;color:rgba(217,180,106,.13)}
+.k-id-top{display:flex;justify-content:space-between;align-items:center;font-size:12px;letter-spacing:.2em;color:var(--k-gold-2)}
+.k-chip{display:inline-flex;align-items:center;gap:5px;background:rgba(217,180,106,.16);padding:4px 10px;border-radius:999px;letter-spacing:.05em}
+.k-id-mid{display:flex;align-items:center;gap:18px;position:relative}
+.k-photo{width:96px;height:96px;border-radius:50%;overflow:hidden;flex-shrink:0;border:3px solid var(--k-gold);box-shadow:0 0 0 5px rgba(217,180,106,.15)}
+.k-photo img,.k-photo svg{width:100%;height:100%;object-fit:cover;display:block}
+.k-id-name{font-size:28px;font-weight:700;line-height:1.15}
+.k-id-num{font-size:14px;letter-spacing:.1em;opacity:.65;margin-top:6px;font-variant-numeric:tabular-nums;direction:ltr;text-align:start;unicode-bidi:plaintext}
+.k-id-grid{display:grid;grid-template-columns:1fr 1fr 1.3fr;gap:12px;position:relative}
+.k-id-grid small{display:block;font-size:11.5px;opacity:.6;margin-bottom:3px}
+.k-id-grid b{font-size:15px;font-weight:600;line-height:1.3}
+.k-lgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.k-lt{position:relative;height:82px;border-radius:18px;background:#fff;border:1.5px solid rgba(7,26,23,.10);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--k-text);transition:all .2s}
+.k-lt b{font-size:20px;font-weight:600}
+.k-lt small{font-size:11px;letter-spacing:.14em;opacity:.45}
+.k-lt.on{border:2px solid var(--k-gold);background:#FFF8E8}
+.k-lt i{position:absolute;top:8px;inset-inline-end:8px;width:22px;height:22px;border-radius:50%;background:var(--k-gold);color:#fff;display:grid;place-items:center}
+.k-cta{margin-top:auto;height:74px;border-radius:22px;display:flex;align-items:center;justify-content:center;gap:12px;font-size:22px;font-weight:600;color:var(--k-ihram);
+  background:linear-gradient(135deg,#0E3B33,#1E7A66);box-shadow:0 14px 30px -12px rgba(14,59,51,.7);transition:transform .15s}
+.k-cta:active,.k-tile:active,.k-sosbar:active,.k-wf:active,.k-ct:active,.k-lt:active{transform:scale(.98)}
+
+/* HUB */
+.k-hub-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.k-hub-top small{font-size:16px;opacity:.6}
+.k-hub-top h1{margin:2px 0 0;font-size:30px;font-weight:700;line-height:1.15}
+.k-pill{display:flex;align-items:center;gap:7px;padding:10px 14px;border-radius:14px;border:1px solid rgba(7,26,23,.14);font-size:14px;color:var(--k-text);background:#fff;white-space:nowrap}
+.k-track{background:#fff;border:1px solid rgba(7,26,23,.08);border-radius:22px;padding:16px 20px;display:flex;flex-direction:column;gap:14px}
+.k-track-h small{display:block;font-size:12px;letter-spacing:.1em;text-transform:uppercase;opacity:.5}
+.k-track-h b{font-size:17px;font-weight:600;color:var(--k-emerald)}
+.k-days{display:flex;justify-content:space-between;position:relative}
+.k-days::before{content:"";position:absolute;left:18px;right:18px;top:50%;height:2px;background:rgba(7,26,23,.1)}
+.k-days span{position:relative;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#fff;border:1.5px solid rgba(7,26,23,.15);font-size:15px;font-weight:600;color:rgba(11,35,31,.55);font-variant-numeric:tabular-nums}
+.k-days span.on{background:var(--k-gold);border-color:var(--k-gold);color:var(--k-ink);box-shadow:0 0 0 6px rgba(217,180,106,.22)}
+.k-info{display:grid;grid-template-columns:1.25fr 1fr;gap:12px}
+.k-prayer,.k-heat{border-radius:22px;padding:16px 18px;display:flex;flex-direction:column;gap:2px;position:relative;overflow:hidden}
+.k-prayer{background:var(--k-emerald);color:var(--k-ihram)}
+.k-prayer > svg,.k-heat > svg{position:absolute;top:14px;inset-inline-end:14px;opacity:.55}
+.k-prayer small,.k-heat small{font-size:13px;opacity:.7}
+.k-pr-row{display:flex;align-items:baseline;gap:10px;margin-top:4px}
+.k-pr-row b{font-size:24px;font-weight:600}
+.k-pr-row span{font-size:22px;color:var(--k-gold-2);font-variant-numeric:tabular-nums}
+.k-prayer em,.k-heat em{font-style:normal;font-size:13px;opacity:.75;margin-top:4px}
+.k-heat{background:#F6E5C3;color:#6E4210}
+.k-heat b{font-size:26px;font-weight:700;margin-top:2px}
+.k-tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:1;min-height:0}
+.k-tile{position:relative;border-radius:26px;padding:20px;display:flex;flex-direction:column;justify-content:flex-end;gap:6px;text-align:start;overflow:hidden;transition:transform .15s}
+.k-tile b{display:block;font-size:21px;font-weight:600;line-height:1.25}
+.k-tile span{display:block;font-size:14px;opacity:.75;line-height:1.45;margin-top:4px}
+.k-tile-wf{background:linear-gradient(160deg,#1E7A66,#0E3B33);color:var(--k-ihram)}
+.k-tile-ai{background:linear-gradient(160deg,#1B2422,#0A1513);color:var(--k-ihram)}
+.k-tile .art{position:absolute;inset:0 0 auto 0;height:58%}
+.k-tile-txt{position:relative}
+.k-go{position:absolute;top:16px;inset-inline-end:16px;width:40px;height:40px;border-radius:50%;background:rgba(251,248,241,.14);display:grid;place-items:center}
+.k-mini-orb{position:absolute;top:36px;left:50%;width:108px;height:108px;margin-left:-54px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#FFF1CF 0%,#E8C987 22%,#C9A04E 45%,#1E7A66 80%,#0E3B33 100%);
+  box-shadow:0 0 40px rgba(217,180,106,.45);animation:breathe 4s ease-in-out infinite}
+.k-mini-orb.big{position:relative;top:auto;left:auto;margin:0;width:140px;height:140px}
+@keyframes breathe{50%{transform:scale(1.06);box-shadow:0 0 60px rgba(217,180,106,.6)}}
+.k-sosbar{height:94px;border-radius:24px;display:flex;align-items:center;gap:16px;padding:0 20px;text-align:start;color:#fff;
+  background:linear-gradient(135deg,#E5484D,#B4232A);box-shadow:0 14px 30px -14px rgba(229,72,77,.8);transition:transform .15s;flex-shrink:0}
+.k-sosbar b{display:block;font-size:20px;font-weight:600}
+.k-sosbar span{display:block;font-size:14px;opacity:.85}
+.k-sosbar > div{flex:1}
+.k-sosbar .k-sosb{width:60px;height:60px;border-radius:50%;background:#fff;color:#C62A31;display:grid;place-items:center;font-weight:700;font-size:17px;letter-spacing:.04em;flex-shrink:0;box-shadow:0 0 0 6px rgba(255,255,255,.18)}
+
+/* EMERGENCY */
+.k-em{background:linear-gradient(180deg,#FFF1F1 0%,var(--k-ihram) 45%)}
+.k-sos-wrap{position:relative;width:300px;height:300px;margin:4px auto 0;flex-shrink:0}
+.k-sos-ring{position:absolute;inset:0;transform:rotate(-90deg)}
+.k-sos-ring .bg{fill:none;stroke:rgba(229,72,77,.14);stroke-width:12}
+.k-sos-ring .fg{fill:none;stroke:var(--k-red);stroke-width:12;stroke-linecap:round}
+.k-sos{position:absolute;inset:30px;border-radius:50%;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;touch-action:none;
+  background:radial-gradient(circle at 35% 30%,#FF7A7E,#E5484D 45%,#A91E25);box-shadow:0 20px 40px -10px rgba(229,72,77,.65);animation:halo 2.4s ease-out infinite}
+.k-sos b{font-size:58px;font-weight:700;letter-spacing:.06em;line-height:1}
+.k-sos span{font-size:15px;opacity:.92;max-width:170px;text-align:center;line-height:1.35}
+.k-sos.hold{animation:none;transform:scale(.96)}
+@keyframes halo{0%{box-shadow:0 0 0 0 rgba(229,72,77,.45),0 20px 40px -10px rgba(229,72,77,.65)}100%{box-shadow:0 0 0 34px rgba(229,72,77,0),0 20px 40px -10px rgba(229,72,77,.65)}}
+.k-contacts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.k-ct{min-height:104px;border-radius:20px;background:#fff;border:1px solid rgba(7,26,23,.09);padding:16px;display:flex;align-items:center;gap:12px;text-align:start;color:var(--k-text);transition:transform .15s}
+.k-ct > i{width:46px;height:46px;border-radius:14px;background:rgba(30,122,102,.1);color:var(--k-jade);display:grid;place-items:center;flex-shrink:0}
+.k-ct.red > i{background:rgba(229,72,77,.1);color:var(--k-red)}
+.k-ct b{display:block;font-size:18px;font-weight:600;line-height:1.2}
+.k-ct.red b{font-size:26px;font-variant-numeric:tabular-nums}
+.k-ct span{display:block;font-size:13px;opacity:.6;margin-top:3px;line-height:1.35}
+.k-scrim{position:absolute;inset:0;background:rgba(7,26,23,.45);z-index:20;animation:kfade .25s both}
+.k-call{position:absolute;left:0;right:0;bottom:0;z-index:21;background:#fff;border-radius:30px 30px 0 0;padding:30px 28px 34px;display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--k-text);animation:sheet .35s cubic-bezier(.2,.8,.2,1) both}
+@keyframes sheet{from{transform:translateY(100%)}to{transform:none}}
+.k-call-ic{width:84px;height:84px;border-radius:50%;background:var(--k-jade);color:#fff;display:grid;place-items:center;animation:halo2 1.6s ease-out infinite;margin-bottom:8px}
+@keyframes halo2{0%{box-shadow:0 0 0 0 rgba(30,122,102,.4)}100%{box-shadow:0 0 0 26px rgba(30,122,102,0)}}
+.k-call small{font-size:15px;opacity:.6}
+.k-call b{font-size:26px;font-weight:700}
+.k-call .num{font-size:17px;opacity:.7;font-variant-numeric:tabular-nums}
+.k-call .k-dots{color:var(--k-jade);margin:8px 0 14px}
+.k-endcall{width:100%;height:64px;border-radius:18px;background:var(--k-red);color:#fff;font-size:19px;font-weight:600}
+.k-sos-on{position:absolute;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:40px 36px;text-align:center;color:#fff;
+  background:radial-gradient(90% 60% at 50% 30%,#D23A40 0%,#8E141A 70%,#5E0B10 100%);animation:kfade .3s both}
+.k-pulse{position:relative;width:170px;height:170px;margin-bottom:14px}
+.k-pulse i{position:absolute;inset:0;border-radius:50%;border:2px solid rgba(255,255,255,.5);animation:ripple 2.4s ease-out infinite}
+.k-pulse i:nth-child(2){animation-delay:.8s}.k-pulse i:nth-child(3){animation-delay:1.6s}
+@keyframes ripple{from{transform:scale(.5);opacity:1}to{transform:scale(1.35);opacity:0}}
+.k-pulse-core{position:absolute;inset:38px;border-radius:50%;background:#fff;color:#B4232A;display:grid;place-items:center}
+.k-sos-on h2{margin:0;font-size:34px;font-weight:700}
+.k-sos-on p{margin:0;font-size:17px;opacity:.88;line-height:1.5;max-width:380px}
+.k-loc{display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:18px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);text-align:start;margin-top:10px}
+.k-loc b{display:block;font-size:16px}
+.k-loc span{display:block;font-size:13px;opacity:.75;font-variant-numeric:tabular-nums}
+.k-eta{font-size:15px;opacity:.85}
+.k-cancel{margin-top:18px;height:58px;padding:0 34px;border-radius:16px;border:1.5px solid rgba(255,255,255,.55);font-size:17px;font-weight:600}
+
+/* WAYFINDING */
+.k-q{margin:0;font-size:28px;font-weight:600;line-height:1.25}
+.k-wfl{display:flex;flex-direction:column;gap:12px}
+.k-wf{min-height:124px;border-radius:24px;background:#fff;border:1px solid rgba(7,26,23,.09);display:flex;align-items:center;gap:16px;padding:16px 18px;text-align:start;color:var(--k-text);transition:transform .15s}
+.k-wf > div{flex:1}
+.k-wf-ic{width:68px;height:68px;border-radius:20px;background:rgba(30,122,102,.1);color:var(--k-jade);display:grid;place-items:center;flex-shrink:0}
+.k-wf b{display:block;font-size:20px;font-weight:600}
+.k-wf span{display:block;font-size:14px;opacity:.6;margin-top:3px}
+.k-wf em{display:flex;align-items:center;gap:6px;font-style:normal;font-size:14px;margin-top:8px;color:var(--k-jade);font-weight:500}
+.k-wf.mine{background:linear-gradient(135deg,#0E3B33,#1E7A66);color:var(--k-ihram);border-color:transparent}
+.k-wf.mine .k-wf-ic{background:rgba(217,180,106,.2);color:var(--k-gold-2)}
+.k-wf.mine em{color:var(--k-gold-2)}
+.k-wf.mine span{opacity:.8}
+.k-crowd{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;padding:5px 10px;border-radius:999px;white-space:nowrap;font-weight:500}
+.k-crowd::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.k-crowd.c0{background:rgba(30,160,110,.12);color:#13895E}
+.k-crowd.c1{background:rgba(232,150,40,.14);color:#B26A0C}
+.k-crowd.c2{background:rgba(229,72,77,.12);color:#C62A31}
+.k-dark .k-crowd.c0{color:#5EE3A8;background:rgba(94,227,168,.12)}
+.k-dark .k-crowd.c1{color:#F5B65A;background:rgba(245,182,90,.14)}
+.k-dark .k-crowd.c2{color:#FF8186;background:rgba(255,129,134,.14)}
+.k-wf.mine .k-crowd.c0{background:rgba(255,255,255,.14);color:#9FF0C8}
+
+/* MAP */
+.k-maphead{height:78px;flex-shrink:0;display:flex;align-items:center;gap:14px;padding:0 22px;position:relative;z-index:4;background:rgba(7,26,23,.7)}
+.k-maphead > .minw0{flex:1}
+.k-maphead b{display:block;font-size:19px;font-weight:600}
+.k-maphead span{display:block;font-size:14px;color:var(--k-gold-2);margin-top:2px}
+.k-etac{display:flex;align-items:baseline;gap:4px;padding:10px 14px;border-radius:16px;background:var(--k-gold);color:var(--k-ink)}
+.k-etac b{font-size:24px;font-weight:700;font-variant-numeric:tabular-nums}
+.k-etac small{font-size:13px;font-weight:600}
+.k-etac svg{align-self:center}
+.k-mapwrap{flex:1;position:relative;overflow:hidden}
+.k-mapsvg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.k-mapsvg text{font-family:var(--ui)}
+.k-route{animation:dash 1.2s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-28}}
+.k-phone{position:absolute;top:16px;inset-inline-end:16px;z-index:3;display:flex;align-items:center;gap:8px;padding:11px 16px;border-radius:16px;background:rgba(7,26,23,.85);border:1px solid rgba(217,180,106,.4);color:var(--k-gold-2);font-size:14px;font-weight:500;backdrop-filter:blur(6px)}
+.k-sheet{position:absolute;left:0;right:0;bottom:0;z-index:4;background:rgba(6,20,18,.95);border-top:1px solid rgba(217,180,106,.25);border-radius:28px 28px 0 0;backdrop-filter:blur(10px);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.k-sheet.closed{transform:translateY(calc(100% - 64px))}
+.k-handle{width:100%;height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-size:14px;color:rgba(251,248,241,.7)}
+.k-handle i{width:44px;height:5px;border-radius:3px;background:rgba(251,248,241,.25)}
+.k-rows{padding:0 16px 18px;display:flex;flex-direction:column;gap:8px}
+.k-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;border:1px solid rgba(251,248,241,.08);transition:background .2s}
+.k-row.on{background:rgba(217,180,106,.12);border-color:rgba(217,180,106,.45)}
+.k-row > div{flex:1}
+.k-row-ic{width:42px;height:42px;border-radius:12px;background:rgba(251,248,241,.08);color:var(--k-gold-2);display:grid;place-items:center;flex-shrink:0}
+.k-row b{display:block;font-size:16px;font-weight:600}
+.k-row span{display:block;font-size:13px;opacity:.65;margin-top:2px}
+.k-sel{padding:10px 16px;border-radius:12px;border:1.5px solid var(--k-gold);color:var(--k-gold-2);font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.k-row.on .k-sel{background:var(--k-gold);color:var(--k-ink)}
+.k-qr{position:absolute;inset:0;z-index:10;background:rgba(4,14,12,.88);backdrop-filter:blur(6px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;animation:kfade .25s both}
+.k-qr-card{background:#fff;color:var(--k-text);border-radius:26px;padding:24px;display:flex;flex-direction:column;align-items:center;gap:14px;max-width:320px;text-align:center}
+.k-qr-card p{margin:0;font-size:16px;font-weight:500;line-height:1.45}
+.k-close{height:56px;padding:0 34px;border-radius:16px;border:1px solid rgba(251,248,241,.3);font-size:17px}
+
+/* AI */
+.k-ai-live{position:absolute;top:56px;left:0;right:0;bottom:0;background:#000}
+.k-ai-live iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.k-ai-load{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;background:radial-gradient(90% 60% at 50% 35%,#14503F,#071A17);font-size:16px;opacity:1;transition:opacity .8s;pointer-events:none;z-index:1}
+.k-ai-load.gone{opacity:0}
+.k-ai-top{position:absolute;top:70px;inset-inline-start:16px;z-index:3;display:flex;align-items:center;gap:10px}
+.k-ai-chip{display:flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;background:rgba(7,26,23,.75);border:1px solid rgba(217,180,106,.35);font-size:14px;color:var(--k-gold-2);backdrop-filter:blur(6px)}
+.k-ai-chip i{width:8px;height:8px;border-radius:50%;background:#5EE3A8;box-shadow:0 0 8px #5EE3A8}
+.k-hints{position:absolute;top:136px;left:16px;right:16px;z-index:3;display:flex;flex-wrap:wrap;gap:8px;transition:opacity .8s,transform .8s}
+.k-hints.gone{opacity:0;transform:translateY(-10px);pointer-events:none}
+.k-hints small{width:100%;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--k-gold-2);opacity:.85}
+.k-hints span{padding:8px 14px;border-radius:999px;background:rgba(7,26,23,.72);border:1px solid rgba(251,248,241,.18);font-size:14px;backdrop-filter:blur(6px)}
+.k-ai-demo{align-items:center;text-align:center;gap:14px}
+.k-ai-demo .k-head{align-self:stretch}
+.k-ai-demo .k-head h1{font-family:'Reem Kufi',var(--ui);color:var(--k-gold-2);font-weight:600}
+.k-orbw{position:relative;width:220px;height:220px;flex-shrink:0;display:grid;place-items:center}
+.k-orb{position:relative;width:170px;height:170px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#FFF3D6 0%,#E8C987 20%,#C9A04E 42%,#1E7A66 76%,#0B2E28 100%);
+  box-shadow:0 0 60px rgba(217,180,106,.45),inset 0 -14px 30px rgba(7,26,23,.45);animation:breathe 4.5s ease-in-out infinite}
+.k-orb::after{content:"";position:absolute;inset:-22px;border-radius:50%;border:1px solid rgba(217,180,106,.35);border-top-color:var(--k-gold-2);animation:spin 5s linear infinite}
+.k-orb.listen{animation:breathe 1.2s ease-in-out infinite}
+.k-orb.listen::after{border-color:rgba(92,200,255,.5);border-top-color:var(--k-sky);animation-duration:1.4s}
+.k-orb.think::after{animation-duration:.9s}
+.k-orb.talk{animation:talk .45s ease-in-out infinite alternate}
+@keyframes talk{to{transform:scale(1.07);box-shadow:0 0 90px rgba(217,180,106,.7),inset 0 -14px 30px rgba(7,26,23,.45)}}
+.k-orb svg{position:absolute;inset:50px;color:rgba(7,26,23,.35)}
+.k-ai-hello b{display:block;font-size:22px;font-weight:600}
+.k-ai-hello span{display:block;font-size:15px;opacity:.65;margin-top:4px}
+.k-chat{flex:1;align-self:stretch;display:flex;flex-direction:column;justify-content:flex-end;gap:10px;min-height:0;overflow:hidden}
+.k-msg{max-width:86%;padding:13px 17px;border-radius:20px;font-size:16px;line-height:1.5;text-align:start;animation:kfade .35s both}
+.k-msg.me{align-self:flex-end;background:rgba(251,248,241,.12);border-end-end-radius:6px}
+.k-msg.bot{align-self:flex-start;background:var(--k-ihram);color:var(--k-text);border-end-start-radius:6px;min-height:48px}
+.k-msg.bot .k-dots{color:var(--k-jade);justify-content:flex-start;padding:6px 0}
+.k-chips{align-self:stretch;display:flex;flex-direction:column;gap:8px}
+.k-chips small{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--k-gold-2);opacity:.85}
+.k-chips div{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.k-chips button{padding:9px 15px;border-radius:999px;border:1px solid rgba(251,248,241,.2);font-size:14px;color:rgba(251,248,241,.9)}
+.k-micw{display:flex;flex-direction:column;align-items:center;gap:8px}
+.k-mic{width:84px;height:84px;border-radius:50%;display:grid;place-items:center;color:var(--k-ink);background:radial-gradient(circle at 35% 30%,#FFF1CF,var(--k-gold) 55%,#A57F38);box-shadow:0 0 0 8px rgba(217,180,106,.16),0 12px 30px -8px rgba(217,180,106,.6)}
+.k-micw span{font-size:14px;opacity:.7}
+.k-note{font-size:12px;opacity:.45}
+.k-openlive{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:999px;border:1px solid rgba(217,180,106,.5);color:var(--k-gold-2);font-size:14px;font-weight:500;text-decoration:none;background:rgba(217,180,106,.08)}
+
+/* idle warning */
+.k-idle{position:absolute;inset:0;z-index:100;background:rgba(4,14,12,.75);backdrop-filter:blur(4px);display:grid;place-items:center;animation:kfade .25s both}
+.k-idle-card{width:80%;background:var(--k-ihram);color:var(--k-text);border-radius:28px;padding:30px 26px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
+.k-idle-card .n{width:88px;height:88px;border-radius:50%;border:4px solid var(--k-gold);display:grid;place-items:center;font-size:36px;font-weight:700;color:var(--k-emerald);font-variant-numeric:tabular-nums}
+.k-idle-card b{font-size:22px}
+.k-idle-card button{width:100%;height:62px;border-radius:18px;background:var(--k-emerald);color:var(--k-ihram);font-size:19px;font-weight:600}
+
+/* live avatar layer: one iframe that moves between the home tile and the AI screen */
+.k-layer{position:absolute;z-index:4;overflow:hidden;background:#071A17;
+  transition:left .5s cubic-bezier(.2,.8,.2,1),top .5s cubic-bezier(.2,.8,.2,1),width .5s cubic-bezier(.2,.8,.2,1),height .5s cubic-bezier(.2,.8,.2,1),border-radius .5s,opacity .3s}
+.k-layer{container-type:size}
+.k-layer iframe{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:max(100cqw,calc(100cqh * var(--ar,.5625)));height:max(100cqh,calc(100cqw / var(--ar,.5625)));border:0;pointer-events:none}
+.k-layer.ready iframe{pointer-events:auto}
+/* horizontal embed: avatar in a 16:9 window, helper panel fills the rest */
+.avh:not(.land) .k-hints{display:none}
+.avh:not(.land) .k-ai-side{position:absolute;top:360px;bottom:0;left:0;right:0;display:flex;flex-direction:column;justify-content:flex-start;gap:14px;padding:36px 32px 40px}
+.avh:not(.land) .k-ai-side h2{margin:0;font-family:'Reem Kufi',var(--ui);font-size:40px;line-height:1.1;color:var(--k-gold-2);font-weight:600}
+.avh:not(.land) .k-ai-side p{margin:0;font-size:18px;opacity:.8;line-height:1.55}
+.avh:not(.land) .k-ai-side small{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--k-gold-2);margin-top:8px}
+.avh:not(.land) .k-ai-side .chips{display:flex;flex-wrap:wrap;gap:8px}
+.avh:not(.land) .k-ai-side .chips span{padding:9px 14px;border-radius:999px;border:1px solid rgba(251,248,241,.2);font-size:15px}
+.avh.land .k-ai-side{width:560px;padding:40px 48px}
+.avh.land .k-ai-side h2{font-size:48px}
+[data-theme="signal"].avh .k-ai-side h2{font-family:var(--ui);color:var(--y);font-weight:700}
+[data-theme="signal"].avh .k-ai-side small{color:var(--y)}
+[data-theme="signal"].avh .k-ai-side .chips span{border:2px solid #444;border-radius:6px;background:#000}
+[data-theme="dusk"].avh .k-ai-side h2{font-family:var(--ui);font-weight:300;color:var(--sand)}
+[data-theme="dusk"].avh .k-ai-side small{color:var(--sand)}
+[data-theme="dusk"].avh .k-ai-side .chips span{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.22)}
+.land .k-ai-side{display:none!important}
+.land .k-layer.full iframe{width:min(100cqw,calc(100cqh * var(--ar,.5625)));height:min(100cqh,calc(100cqw / var(--ar,.5625)))}
+.k-layer.off{opacity:0;visibility:hidden;pointer-events:none;left:0;top:0;width:10px;height:10px}
+.k-layer.tile{border-radius:26px 26px 0 0}
+.k-layer.instant{transition:none}
+.k-layer .k-ai-load{gap:16px;font-size:14px;color:rgba(251,248,241,.8)}
+.k-layer.tile .k-mini-orb.big{width:90px;height:90px}
+
+/* AI tile on home */
+.k-ava-media{position:absolute;left:0;right:0;top:0;height:64%;overflow:hidden;border-radius:26px 26px 0 0;background:radial-gradient(90% 80% at 50% 30%,#1B4D43,#0A1513)}
+.k-ava-media .k-mini-orb{top:50%;margin-top:-54px}
+.k-ava-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 12%}
+.k-ava-media::after{content:"";position:absolute;inset:auto 0 0 0;height:42%;background:linear-gradient(transparent,#0A1513);pointer-events:none}
+.k-ava-media .k-talk{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:2;display:inline-flex;align-items:center;gap:6px;margin:0;padding:7px 14px;border-radius:999px;background:var(--k-gold);color:var(--k-ink);font-size:13px;font-weight:600;opacity:1;line-height:1.2;white-space:nowrap}
+.k-orb-img{position:absolute;inset:0;border-radius:50%;overflow:hidden;display:grid;place-items:center;color:rgba(7,26,23,.35)}
+.k-orb-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 15%}
+.k-orb .k-orb-img svg{position:static}
+
+/* more languages */
+.k-lp.more{display:inline-flex;align-items:center;gap:6px;border-style:dashed}
+.k-more{height:58px;border-radius:16px;border:1.5px dashed rgba(7,26,23,.22);display:flex;align-items:center;justify-content:center;gap:10px;font-size:17px;font-weight:500;color:var(--k-text);flex-shrink:0}
+.k-more small{font-size:12px;padding:3px 9px;border-radius:999px;background:rgba(30,122,102,.12);color:var(--k-jade);font-weight:600}
+.k-more.on{border:2px solid var(--k-gold);background:#FFF8E8;font-weight:600}
+.k-lsheet-scrim{position:absolute;inset:0;z-index:40;background:rgba(4,14,12,.62);animation:kop .2s both}
+.k-lsheet{position:absolute;left:0;right:0;bottom:0;z-index:41;background:var(--k-ihram);color:var(--k-text);border-radius:30px 30px 0 0;padding:20px 22px 26px;animation:sheet .35s cubic-bezier(.2,.8,.2,1) both;max-height:84%;overflow:auto;text-align:start}
+.k-lsheet-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.k-lsheet-h b{font-size:21px;font-weight:600}
+.k-lsheet-h button{width:46px;height:46px;border-radius:14px;background:#fff;border:1px solid rgba(7,26,23,.12);display:grid;place-items:center;color:var(--k-text)}
+.k-lsheet-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.k-lopt{height:74px;border-radius:16px;background:#fff;border:1.5px solid rgba(7,26,23,.1);display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding:0 18px;gap:2px;text-align:start;color:var(--k-text)}
+.k-lopt b{font-size:18px;font-weight:600}
+.k-lopt small{font-size:12.5px;opacity:.55}
+.k-lopt.on{border:2px solid var(--k-gold);background:#FFF8E8}
+@keyframes kop{from{opacity:0}}
+
+/* ═════════ LANDSCAPE (1280×720) ═════════ */
+#app.land{width:1280px;height:720px}
+.land .k-att{display:grid;grid-template-columns:minmax(0,1fr) 400px;grid-template-rows:auto auto auto 1fr;column-gap:80px;row-gap:12px;padding:28px 96px 0;align-items:center;justify-items:center}
+.land .k-brand{grid-area:1/1}
+.land #kRot{grid-area:2/1;min-height:150px}
+.land .k-rot h1{font-size:40px}
+.land .k-rot p{font-size:18px;max-width:540px}
+.land .k-scantext{grid-area:3/1}
+.land .k-portal{grid-area:1/2/4/3;width:380px;height:380px}
+.land .k-win{width:230px;height:230px}
+.land .k-below{grid-area:4/2;align-self:end}
+.land .k-langs{padding:10px 80px 22px}
+.land .k-lsheet{left:50%;right:auto;bottom:auto;top:50%;width:840px;transform:translate(-50%,-50%);border-radius:28px;animation:kop .25s both}
+.land .k-lsheet-grid{grid-template-columns:repeat(3,1fr)}
+
+.land .k-s-verify .k-pad{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto auto 1fr auto;gap:16px 48px;padding:28px 60px 32px}
+.land .k-s-verify .k-okb{grid-area:1/1}
+.land .k-s-verify .k-id{grid-area:2/1/6/2;align-self:start}
+.land .k-s-verify .k-sec-h{grid-area:1/2}
+.land .k-s-verify .k-lgrid{grid-area:2/2}
+.land .k-s-verify .k-more{grid-area:3/2}
+.land .k-s-verify .k-cta{grid-area:5/2}
+
+.land .k-s-hub .k-pad{display:grid;grid-template-columns:470px minmax(0,1fr);grid-template-rows:auto auto auto 1fr;gap:16px 30px;padding:26px 48px 30px}
+.land .k-s-hub .k-hub-top{grid-area:1/1}
+.land .k-s-hub .k-track{grid-area:2/1}
+.land .k-s-hub .k-info{grid-area:3/1}
+.land .k-s-hub .k-sosbar{grid-area:4/1;align-self:end}
+.land .k-s-hub .k-tiles{grid-area:1/2/5/3}
+
+.land .k-s-em .k-pad{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto 1fr;gap:16px 56px;padding:26px 60px}
+.land .k-s-em .k-head{grid-area:1/1/2/3}
+.land .k-s-em .k-sos-wrap{grid-area:2/1/4/2;align-self:center;width:380px;height:380px}
+.land .k-s-em .k-sec-h{grid-area:2/2;align-self:end}
+.land .k-s-em .k-contacts{grid-area:3/2;align-self:start}
+.land .k-call{left:50%;right:auto;width:600px;transform:translateX(-50%);animation:kop .25s both}
+
+.land .k-s-wf .k-pad{padding:26px 60px}
+.land .k-wfl{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.land .k-wf{min-height:150px}
+
+.land .k-sheet{top:0;bottom:0;left:auto;right:auto;inset-inline-end:0;width:430px;border-radius:0;border-top:0;border-inline-start:1px solid rgba(217,180,106,.25);overflow:auto}
+.land .k-sheet.closed{transform:none}
+.land .k-handle{height:58px;cursor:default}
+.land .k-handle i{display:none}
+.land .k-phone{inset-inline-end:450px}
+
+.k-ai-side{display:none}
+.k-ai-top{z-index:6}
+.k-hints{z-index:6}
+.land .k-hints{display:none}
+.land .k-ai-side{position:absolute;top:56px;bottom:0;inset-inline-end:0;width:680px;display:flex;flex-direction:column;justify-content:center;gap:20px;padding:40px 70px}
+.land .k-ai-side h2{margin:0;font-family:'Reem Kufi',var(--ui);font-size:60px;line-height:1.1;color:var(--k-gold-2);font-weight:600}
+.land .k-ai-side p{margin:0;font-size:20px;opacity:.78;line-height:1.55}
+.land .k-ai-side small{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--k-gold-2);margin-top:12px}
+.land .k-ai-side .chips{display:flex;flex-wrap:wrap;gap:10px}
+.land .k-ai-side .chips span{padding:10px 16px;border-radius:999px;border:1px solid rgba(251,248,241,.2);font-size:16px}
+
+.land .k-ai-demo{display:grid;grid-template-columns:440px minmax(0,1fr);grid-template-rows:auto 1fr auto auto auto;gap:14px 56px;padding:24px 60px 28px}
+.land .k-ai-demo .k-head{grid-area:1/1/2/3}
+.land .k-ai-demo .k-orbw{grid-area:2/1;align-self:center;justify-self:center}
+.land .k-ai-demo .k-ai-hello{grid-area:3/1}
+.land .k-ai-demo .k-micw{grid-area:4/1}
+.land .k-ai-demo .k-openlive{grid-area:5/1;justify-self:center}
+.land .k-ai-demo .k-chat{grid-area:2/2/4/3}
+.land .k-ai-demo .k-chips{grid-area:4/2/6/3;align-self:start}
+
+/* ═══════════════ DESIGN 2 · SIGNAL — wayfinding signage, built for full sun and low vision ═══════════════ */
+#app[data-theme="signal"]{--tf:'Atkinson Hyperlegible','Noto Kufi Arabic';--y:#FFD400;background:#0A0A0A}
+[data-theme="signal"] .k-screen{background:#0A0A0A;color:#fff}
+[data-theme="signal"] .k-pat{display:none}
+[data-theme="signal"] .k-sb{background:var(--y);color:#000;border-bottom:0;font-weight:700}
+[data-theme="signal"] .k-sb .c{color:#000;font-weight:700}
+[data-theme="signal"] .k-sb .sep{background:rgba(0,0,0,.35)}
+[data-theme="signal"] .k-head h1{font-size:30px;font-weight:700}
+[data-theme="signal"] .k-back,[data-theme="signal"] .k-back.dark{background:#fff;color:#000;border:0;border-radius:6px}
+[data-theme="signal"] .k-sec-h{color:#fff}
+[data-theme="signal"] .k-okb{background:#00C853;color:#000;border-radius:6px;font-weight:700}
+[data-theme="signal"] .k-okb i{background:#000;color:#00C853}
+[data-theme="signal"] .k-id{background:#fff;color:#000;border-radius:8px;box-shadow:none}
+[data-theme="signal"] .k-id::after{display:none}
+[data-theme="signal"] .k-id-wm{color:rgba(0,0,0,.06)}
+[data-theme="signal"] .k-id-top{color:#000;font-weight:700}
+[data-theme="signal"] .k-chip{background:var(--y);color:#000}
+[data-theme="signal"] .k-photo{border:3px solid #000;box-shadow:none;border-radius:6px}
+[data-theme="signal"] .k-id-grid{border-top:2px dashed #000;padding-top:14px}
+[data-theme="signal"] .k-id-grid small{opacity:.65}
+[data-theme="signal"] .k-lt{background:#171717;border:2px solid #333;color:#fff;border-radius:6px}
+[data-theme="signal"] .k-lt.on{background:var(--y);border-color:var(--y);color:#000}
+[data-theme="signal"] .k-lt i{background:#000;color:var(--y)}
+[data-theme="signal"] .k-more{border:2px dashed #555;color:#fff;border-radius:6px}
+[data-theme="signal"] .k-more small{background:#fff;color:#000}
+[data-theme="signal"] .k-more.on{background:var(--y);color:#000;border:2px solid var(--y)}
+[data-theme="signal"] .k-cta{background:var(--y);color:#000;border-radius:8px;box-shadow:none;font-weight:700;font-size:26px}
+[data-theme="signal"] .k-em{background:#0A0A0A}
+[data-theme="signal"] .k-sos-ring .bg{stroke:#262626}
+[data-theme="signal"] .k-sos-ring .fg{stroke:#FF3B30}
+[data-theme="signal"] .k-sos{background:#FF3B30}
+[data-theme="signal"] .k-ct{background:#171717;border:2px solid #2A2A2A;color:#fff;border-radius:8px}
+[data-theme="signal"] .k-ct > i{background:#fff;color:#000;border-radius:6px}
+[data-theme="signal"] .k-ct.red > i{background:#FF3B30;color:#fff}
+[data-theme="signal"] .k-ct span{opacity:.75}
+[data-theme="signal"] .k-call{background:#111;color:#fff;border-top:4px solid var(--y);border-radius:0}
+[data-theme="signal"] .k-call-ic{background:var(--y);color:#000;border-radius:8px}
+[data-theme="signal"] .k-call .k-dots{color:var(--y)}
+[data-theme="signal"] .k-endcall{border-radius:8px;background:#FF3B30}
+[data-theme="signal"] .k-sos-on{background:#FF3B30}
+[data-theme="signal"] .k-loc{border-radius:8px}
+[data-theme="signal"] .k-cancel{border-radius:8px;border-width:3px}
+[data-theme="signal"] .k-q{font-size:34px;font-weight:700}
+[data-theme="signal"] .k-wf{background:#171717;border:2px solid #2A2A2A;color:#fff;border-radius:8px}
+[data-theme="signal"] .k-wf-ic{background:#fff;color:#000;border-radius:6px}
+[data-theme="signal"] .k-wf em{color:var(--y)}
+[data-theme="signal"] .k-wf.mine{background:var(--y);color:#000}
+[data-theme="signal"] .k-wf.mine .k-wf-ic{background:#000;color:var(--y)}
+[data-theme="signal"] .k-wf.mine em{color:#000}
+[data-theme="signal"] .k-crowd,[data-theme="signal"] .k-wf.mine .k-crowd{border-radius:4px;font-weight:700}
+[data-theme="signal"] .k-crowd.c0,[data-theme="signal"] .k-wf.mine .k-crowd.c0{background:#00C853;color:#000}
+[data-theme="signal"] .k-crowd.c1{background:#FF9F0A;color:#000}
+[data-theme="signal"] .k-crowd.c2{background:#FF3B30;color:#fff}
+[data-theme="signal"] .k-maphead{background:#000}
+[data-theme="signal"] .k-etac{border-radius:6px;background:var(--y)}
+[data-theme="signal"] .k-phone{background:#000;border:2px solid var(--y);color:var(--y);border-radius:6px}
+[data-theme="signal"] .k-sheet{background:#0A0A0A;border-top:3px solid var(--y);border-radius:0}
+[data-theme="signal"].land .k-sheet{border-top:0;border-inline-start:3px solid var(--y)}
+[data-theme="signal"] .k-row{border:2px solid #262626;border-radius:6px}
+[data-theme="signal"] .k-row.on{background:#1E1A00;border-color:var(--y)}
+[data-theme="signal"] .k-row-ic{background:#fff;color:#000;border-radius:6px}
+[data-theme="signal"] .k-sel{border:2px solid var(--y);color:var(--y);border-radius:6px}
+[data-theme="signal"] .k-row.on .k-sel{background:var(--y);color:#000}
+[data-theme="signal"] .k-qr-card,[data-theme="signal"] .k-close{border-radius:8px}
+[data-theme="signal"] .k-ai-demo .k-head h1,[data-theme="signal"].land .k-ai-side h2{font-family:var(--ui);color:var(--y);font-weight:700}
+[data-theme="signal"] .k-orb{background:radial-gradient(circle at 35% 30%,#fff,#FFD400 50%,#7A6500);box-shadow:0 0 50px rgba(255,212,0,.4)}
+[data-theme="signal"] .k-orb::after{border-color:#333;border-top-color:var(--y)}
+[data-theme="signal"] .k-msg{border-radius:8px}
+[data-theme="signal"] .k-msg.me{background:#262626}
+[data-theme="signal"] .k-msg.bot{background:#fff;color:#000}
+[data-theme="signal"] .k-chips small,[data-theme="signal"] .k-hints small,[data-theme="signal"].land .k-ai-side small{color:var(--y)}
+[data-theme="signal"] .k-chips button,[data-theme="signal"] .k-hints span,[data-theme="signal"].land .k-ai-side .chips span{border:2px solid #444;border-radius:6px;background:#000}
+[data-theme="signal"] .k-mic{background:var(--y);box-shadow:0 0 0 8px rgba(255,212,0,.15)}
+[data-theme="signal"] .k-openlive{border:2px solid var(--y);color:var(--y);border-radius:6px;background:none}
+[data-theme="signal"] .k-ai-chip{background:#000;border:2px solid var(--y);color:var(--y);border-radius:6px}
+[data-theme="signal"] .k-lsheet{background:#0A0A0A;color:#fff;border-top:4px solid var(--y);border-radius:0}
+[data-theme="signal"].land .k-lsheet{border:3px solid var(--y);border-radius:8px}
+[data-theme="signal"] .k-lopt{background:#171717;border:2px solid #2A2A2A;color:#fff;border-radius:6px}
+[data-theme="signal"] .k-lopt.on{background:var(--y);color:#000;border-color:var(--y)}
+[data-theme="signal"] .k-lsheet-h button{background:#fff;color:#000;border:0;border-radius:6px}
+[data-theme="signal"] .k-lp{border-radius:6px;border:2px solid #444;color:#fff}
+[data-theme="signal"] .k-lp.on{background:var(--y);border-color:var(--y);color:#000}
+[data-theme="signal"] .k-idle-card{background:#0A0A0A;color:#fff;border:3px solid var(--y);border-radius:8px}
+[data-theme="signal"] .k-idle-card .n{border-color:var(--y);color:var(--y)}
+[data-theme="signal"] .k-idle-card button{background:var(--y);color:#000;border-radius:6px}
+[data-theme="signal"] .k-layer{background:#000}
+[data-theme="signal"] .k-layer.tile{border-radius:6px}
+[data-theme="signal"] .k-ai-load{background:#000}
+[data-theme="signal"] .k-mini-orb{background:radial-gradient(circle at 35% 30%,#fff,#FFD400 50%,#7A6500)}
+/* Signal · welcome */
+.sg-top{padding:26px 30px 0;display:flex;flex-direction:column;gap:20px}
+.sg-brand{display:flex;align-items:center;gap:14px}
+.sg-logo{width:56px;height:56px;background:var(--y);color:#000;display:grid;place-items:center;border-radius:6px;flex-shrink:0}
+.sg-brand b{display:block;font-size:24px;font-weight:700;letter-spacing:.14em}
+.sg-brand small{font-size:13px;opacity:.6;letter-spacing:.04em}
+.sg-board{background:#171717;border:2px solid #2A2A2A;border-radius:8px;padding:22px 24px;min-height:196px;perspective:700px;overflow:hidden}
+.sg-flap{font-size:40px;font-weight:700;line-height:1.15;color:var(--y);text-wrap:balance}
+.sg-board p{margin:12px 0 0;font-size:18px;line-height:1.5;opacity:.82}
+.sg-board.k-fade{animation:none}
+.sg-board.k-fade .sg-flap{animation:flap .55s cubic-bezier(.3,1.4,.6,1) both;transform-origin:50% 0}
+.sg-board.k-fade p{animation:kop .6s .15s both}
+@keyframes flap{from{transform:rotateX(-92deg);opacity:.2}to{transform:none;opacity:1}}
+.sg-scan{margin:20px 30px 0;display:flex;align-items:center;gap:20px;padding:22px;background:var(--y);color:#000;border-radius:8px;text-align:start}
+.sg-scan-ic{width:144px;height:144px;flex-shrink:0;background:#000;color:var(--y);display:grid;place-items:center;border-radius:6px;position:relative;overflow:hidden}
+.sg-scan-ic .k-laser{background:var(--y);box-shadow:0 0 12px var(--y)}
+.sg-scan-ic .k-ok .ring{width:76px;height:76px;background:var(--y);color:#000}
+.sg-scan-txt{flex:1;display:flex;flex-direction:column;gap:6px;min-width:0}
+.sg-scan-txt b{font-size:28px;font-weight:700;line-height:1.2}
+.sg-scan-txt small{font-size:16px;line-height:1.4}
+.sg-scan .k-demo{align-self:flex-start;background:#000;color:var(--y)}
+.sg-arrow{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--y);font-size:18px;font-weight:700;letter-spacing:.04em}
+.sg-arrow svg{animation:chev 1.4s ease-in-out infinite}
+/* Signal · home */
+.sg-hub-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.sg-hub-top small{font-size:16px;opacity:.6}
+.sg-hub-top h1{margin:2px 0 0;font-size:32px;font-weight:700;line-height:1.15}
+.sg-end{display:flex;align-items:center;gap:6px;padding:10px 14px;border:2px solid #444;border-radius:6px;font-size:15px;font-weight:700;white-space:nowrap}
+.sg-strip{display:grid;grid-template-columns:1fr 1.2fr 1fr;border:2px solid #2A2A2A;border-radius:8px;overflow:hidden}
+.sg-strip > div{padding:14px;display:flex;flex-direction:column;gap:2px;border-inline-start:2px solid #2A2A2A;min-width:0}
+.sg-strip > div:first-child{border-inline-start:0}
+.sg-strip small{font-size:11.5px;letter-spacing:.04em;opacity:.6}
+.sg-strip b{font-size:38px;font-weight:700;color:var(--y);font-variant-numeric:tabular-nums;line-height:1.1}
+.sg-strip span{font-size:12.5px;opacity:.85;line-height:1.35}
+.sg-strip .hot b{color:#FF9F0A}
+.sg-signs{display:flex;flex-direction:column;gap:12px;flex:1;min-height:0}
+.sg-sign{flex:1;display:flex;align-items:center;gap:18px;padding:16px;border-radius:8px;background:var(--y);color:#000;text-align:start;position:relative;overflow:hidden;transition:transform .15s}
+.sg-sign:active,.sg-sos:active,.sg-scan:active{transform:scale(.985)}
+.sg-sign .pic{width:112px;height:112px;background:#000;color:var(--y);display:grid;place-items:center;border-radius:6px;flex-shrink:0}
+.sg-sign > div.minw0{flex:1}
+.sg-sign b{display:block;font-size:28px;font-weight:700;line-height:1.15}
+.sg-sign .minw0 span{display:block;font-size:15px;margin-top:4px;opacity:.78;line-height:1.4}
+.sg-sign .arr{flex-shrink:0;display:grid}
+.sg-sign.ai{background:#171717;color:#fff;border:2px solid #fff}
+.sg-sign.ai .k-ava-media{position:relative;inset:auto;width:170px;height:auto;align-self:stretch;min-height:150px;border-radius:6px;flex-shrink:0;background:#000}
+.sg-sign.ai .k-ava-media::after{display:none}
+.sg-sign.ai .k-talk{background:var(--y);border-radius:4px}
+.sg-sos{height:96px;display:flex;align-items:center;gap:18px;padding:0 20px;background:#FF3B30;color:#fff;border-radius:8px;text-align:start;flex-shrink:0;transition:transform .15s}
+.sg-sos > b{font-size:28px;font-weight:700;letter-spacing:.06em;padding:6px 12px;border:3px solid #fff;border-radius:6px}
+.sg-sos strong{display:block;font-size:21px}
+.sg-sos .minw0 span{display:block;font-size:14px;opacity:.92}
+.sg-sos > div{flex:1}
+/* Signal · landscape */
+.land .sg-attract{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:56px 1fr auto auto;column-gap:0}
+.land .sg-attract > .k-sb{grid-column:1/3}
+.land .sg-top{grid-area:2/1/4/2;padding:30px 30px 0 60px;justify-content:center}
+.land .sg-scan{grid-area:2/2;align-self:center;margin:30px 60px 0 30px}
+.land .sg-arrow{grid-area:3/2}
+.land .sg-attract > .k-langs{grid-area:4/1/5/3}
+.land .sg-hub .k-pad{display:grid;grid-template-columns:500px minmax(0,1fr);grid-template-rows:auto auto 1fr;gap:16px 28px;padding:26px 48px 30px}
+.land .sg-hub-top{grid-area:1/1}
+.land .sg-strip{grid-area:2/1}
+.land .sg-sos{grid-area:3/1;align-self:end}
+.land .sg-signs{grid-area:1/2/4/3}
+
+/* ═══════════════ DESIGN 3 · DUSK — a voice-first concierge under the evening sky over Arafat ═══════════════ */
+#app[data-theme="dusk"]{--tf:'Alexandria';--saf:#F4A259;--sand:#FFD8A8;--rose:#E86A7A;--cream:#FFF7EE;background:#140F33}
+[data-theme="dusk"] .k-screen{color:var(--cream);background:
+  radial-gradient(1.6px 1.6px at 12% 9%,rgba(255,255,255,.9) 50%,transparent 52%),
+  radial-gradient(1.2px 1.2px at 28% 22%,rgba(255,255,255,.7) 50%,transparent 52%),
+  radial-gradient(1.4px 1.4px at 46% 6%,rgba(255,255,255,.8) 50%,transparent 52%),
+  radial-gradient(1px 1px at 63% 16%,rgba(255,255,255,.6) 50%,transparent 52%),
+  radial-gradient(1.6px 1.6px at 81% 10%,rgba(255,255,255,.85) 50%,transparent 52%),
+  radial-gradient(1.1px 1.1px at 91% 28%,rgba(255,255,255,.6) 50%,transparent 52%),
+  radial-gradient(1.2px 1.2px at 7% 34%,rgba(255,255,255,.55) 50%,transparent 52%),
+  radial-gradient(1px 1px at 55% 30%,rgba(255,255,255,.5) 50%,transparent 52%),
+  linear-gradient(180deg,#120D2E 0%,#241A4C 36%,#53315F 66%,#B86A5C 88%,#E89A5A 100%)}
+[data-theme="dusk"] .k-pat{display:none}
+[data-theme="dusk"] .k-sb{background:rgba(18,13,46,.4);border-bottom:1px solid rgba(255,255,255,.1);color:rgba(255,247,238,.85)}
+[data-theme="dusk"] .k-sb .c{color:var(--sand)}
+[data-theme="dusk"] .k-head h1{font-weight:400;font-size:28px}
+[data-theme="dusk"] .k-back,[data-theme="dusk"] .k-back.dark{border-radius:50%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);color:var(--cream);backdrop-filter:blur(10px)}
+[data-theme="dusk"] .k-sec-h{color:var(--cream)}
+[data-theme="dusk"] .k-okb{background:rgba(120,230,190,.14);color:#A8F2D6;border-radius:999px;border:1px solid rgba(120,230,190,.3)}
+[data-theme="dusk"] .k-okb i{background:#6FE3B5;color:#140F33}
+[data-theme="dusk"] .k-id{border-radius:30px;background:linear-gradient(135deg,rgba(255,255,255,.16),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(16px);box-shadow:0 20px 50px -20px rgba(0,0,0,.6)}
+[data-theme="dusk"] .k-id::after{height:3px;background:linear-gradient(90deg,var(--saf),var(--rose))}
+[data-theme="dusk"] .k-id-wm{color:rgba(255,216,168,.12)}
+[data-theme="dusk"] .k-id-top{color:var(--sand)}
+[data-theme="dusk"] .k-chip{background:rgba(244,162,89,.2)}
+[data-theme="dusk"] .k-photo{border-color:var(--saf);box-shadow:0 0 0 5px rgba(244,162,89,.18)}
+[data-theme="dusk"] .k-lt,[data-theme="dusk"] .k-ct,[data-theme="dusk"] .k-wf,[data-theme="dusk"] .k-lopt{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:var(--cream);backdrop-filter:blur(14px);border-radius:22px}
+[data-theme="dusk"] .k-lt.on,[data-theme="dusk"] .k-lopt.on,[data-theme="dusk"] .k-more.on{background:rgba(244,162,89,.22);border:1.5px solid var(--saf)}
+[data-theme="dusk"] .k-lt i{background:var(--saf);color:#140F33}
+[data-theme="dusk"] .k-more{border:1.5px dashed rgba(255,255,255,.3);color:var(--cream);border-radius:999px}
+[data-theme="dusk"] .k-more small{background:rgba(255,255,255,.14);color:var(--sand)}
+[data-theme="dusk"] .k-cta{border-radius:999px;background:linear-gradient(135deg,var(--saf),var(--rose));color:#1A1030;box-shadow:0 16px 40px -14px rgba(232,106,122,.8)}
+[data-theme="dusk"] .k-em{background:inherit}
+[data-theme="dusk"] .k-sos-ring .bg{stroke:rgba(255,255,255,.12)}
+[data-theme="dusk"] .k-sos-ring .fg{stroke:#FF9AA2}
+[data-theme="dusk"] .k-sos{background:radial-gradient(circle at 35% 30%,#FFB0B6,#E5484D 50%,#8E1B3A)}
+[data-theme="dusk"] .k-ct > i,[data-theme="dusk"] .k-wf-ic{background:rgba(244,162,89,.18);color:var(--sand);border-radius:50%}
+[data-theme="dusk"] .k-ct.red > i{background:rgba(229,72,77,.22);color:#FFB0B6}
+[data-theme="dusk"] .k-call{background:rgba(26,19,62,.94);color:var(--cream);backdrop-filter:blur(16px)}
+[data-theme="dusk"] .k-call-ic{background:var(--saf);color:#140F33}
+[data-theme="dusk"] .k-call .k-dots{color:var(--sand)}
+[data-theme="dusk"] .k-endcall{border-radius:999px}
+[data-theme="dusk"] .k-sos-on{background:radial-gradient(90% 60% at 50% 30%,#E5484D,#7A1438 70%,#2A0B24)}
+[data-theme="dusk"] .k-cancel{border-radius:999px}
+[data-theme="dusk"] .k-q{font-weight:300;font-size:30px}
+[data-theme="dusk"] .k-wf em{color:var(--sand)}
+[data-theme="dusk"] .k-wf.mine{background:linear-gradient(135deg,rgba(244,162,89,.38),rgba(232,106,122,.24));border-color:rgba(255,216,168,.5)}
+[data-theme="dusk"] .k-crowd.c0,[data-theme="dusk"] .k-wf.mine .k-crowd.c0{color:#8EF0C4;background:rgba(94,227,168,.14)}
+[data-theme="dusk"] .k-crowd.c1{color:#FFC27A;background:rgba(245,182,90,.16)}
+[data-theme="dusk"] .k-crowd.c2{color:#FF9AA2;background:rgba(255,129,134,.16)}
+[data-theme="dusk"] .k-maphead{background:rgba(18,13,46,.6)}
+[data-theme="dusk"] .k-etac{background:linear-gradient(135deg,var(--saf),var(--rose));color:#1A1030;border-radius:999px}
+[data-theme="dusk"] .k-phone{background:rgba(26,19,62,.8);border:1px solid rgba(255,216,168,.45);color:var(--sand);border-radius:999px}
+[data-theme="dusk"] .k-sheet{background:rgba(22,16,52,.9);border-top:1px solid rgba(255,216,168,.25)}
+[data-theme="dusk"] .k-row{border-color:rgba(255,255,255,.1);border-radius:20px}
+[data-theme="dusk"] .k-row.on{background:rgba(244,162,89,.16);border-color:var(--saf)}
+[data-theme="dusk"] .k-row-ic{background:rgba(244,162,89,.16);color:var(--sand);border-radius:50%}
+[data-theme="dusk"] .k-sel{border-color:var(--saf);color:var(--sand);border-radius:999px}
+[data-theme="dusk"] .k-row.on .k-sel{background:var(--saf);color:#1A1030}
+[data-theme="dusk"] .k-qr{background:rgba(18,13,46,.88)}
+[data-theme="dusk"] .k-qr-card{border-radius:30px}
+[data-theme="dusk"] .k-close{border-radius:999px}
+[data-theme="dusk"] .k-ai-demo .k-head h1,[data-theme="dusk"].land .k-ai-side h2{font-family:var(--ui);font-weight:300;color:var(--sand)}
+[data-theme="dusk"] .k-orb{background:radial-gradient(circle at 38% 32%,#FFF6E6,#FFD8A8 30%,#F4A259 55%,#E86A7A 78%,#4B2A6B);box-shadow:0 0 80px rgba(255,190,130,.55)}
+[data-theme="dusk"] .k-orb::after{border-color:rgba(255,255,255,.2);border-top-color:var(--sand)}
+[data-theme="dusk"] .k-msg{border-radius:24px}
+[data-theme="dusk"] .k-msg.me{background:rgba(255,255,255,.14);backdrop-filter:blur(10px)}
+[data-theme="dusk"] .k-msg.bot{background:var(--cream);color:#1A1030}
+[data-theme="dusk"] .k-chips small,[data-theme="dusk"] .k-hints small,[data-theme="dusk"].land .k-ai-side small{color:var(--sand)}
+[data-theme="dusk"] .k-chips button,[data-theme="dusk"] .k-hints span,[data-theme="dusk"].land .k-ai-side .chips span{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.22);backdrop-filter:blur(10px)}
+[data-theme="dusk"] .k-mic{background:radial-gradient(circle at 35% 30%,#FFF1DE,var(--saf) 55%,var(--rose));box-shadow:0 0 0 8px rgba(244,162,89,.16),0 12px 30px -8px rgba(232,106,122,.7)}
+[data-theme="dusk"] .k-openlive{border-color:rgba(255,216,168,.5);color:var(--sand);background:rgba(255,255,255,.06)}
+[data-theme="dusk"] .k-ai-chip{background:rgba(26,19,62,.75);border-color:rgba(255,216,168,.4);color:var(--sand)}
+[data-theme="dusk"] .k-lsheet{background:rgba(24,18,58,.97);color:var(--cream)}
+[data-theme="dusk"] .k-lsheet-h button{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);color:var(--cream);border-radius:50%}
+[data-theme="dusk"] .k-lp{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.22);color:var(--cream);backdrop-filter:blur(8px)}
+[data-theme="dusk"] .k-lp.on{background:var(--cream);border-color:var(--cream);color:#1A1030}
+[data-theme="dusk"] .k-idle-card{background:rgba(24,18,58,.96);color:var(--cream);border:1px solid rgba(255,255,255,.18)}
+[data-theme="dusk"] .k-idle-card .n{border-color:var(--saf);color:var(--sand)}
+[data-theme="dusk"] .k-idle-card button{background:linear-gradient(135deg,var(--saf),var(--rose));color:#1A1030;border-radius:999px}
+[data-theme="dusk"] .k-layer{background:#1A1338}
+[data-theme="dusk"] .k-layer.tile{border-radius:50%}
+[data-theme="dusk"] .k-ai-load{background:radial-gradient(90% 60% at 50% 35%,#53315F,#140F33)}
+[data-theme="dusk"] .k-mini-orb{background:radial-gradient(circle at 38% 32%,#FFF6E6,#FFD8A8 30%,#F4A259 55%,#E86A7A 78%,#4B2A6B)}
+.dk-hills{position:absolute;left:0;right:0;bottom:0;width:100%;height:30%;pointer-events:none}
+/* Dusk · welcome */
+.dk-att{flex:1;display:flex;flex-direction:column;align-items:center;gap:22px;padding:40px 34px 0;text-align:center;position:relative}
+.dk-moon{position:relative;width:180px;height:180px;display:grid;place-items:center;flex-shrink:0}
+.dk-moon::before{content:"";position:absolute;inset:-50px;border-radius:50%;background:radial-gradient(circle,rgba(255,214,160,.38),transparent 64%);animation:breathe 5s ease-in-out infinite}
+.dk-moon::after{content:"";position:absolute;inset:-12px;border-radius:50%;border:1px solid rgba(255,255,255,.22);border-top-color:var(--sand);animation:spin 10s linear infinite}
+.dk-moon-core{position:relative;width:150px;height:150px;border-radius:50%;display:grid;place-items:center;color:rgba(140,70,50,.32);
+  background:radial-gradient(circle at 38% 32%,#FFF6E6,#FFD8A8 45%,#F4A259 82%);box-shadow:0 0 90px rgba(255,200,140,.6),inset -18px -18px 40px rgba(232,106,122,.35)}
+.dk-rot{min-height:150px;display:flex;flex-direction:column;align-items:center}
+.dk-rot h1{margin:0;font-size:34px;font-weight:300;line-height:1.25;text-wrap:balance}
+.dk-rot p{margin:12px 0 0;font-size:17px;opacity:.78;line-height:1.55;max-width:420px}
+.dk-scan{width:100%;display:flex;align-items:center;gap:18px;padding:16px 18px;border-radius:30px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.24);backdrop-filter:blur(18px);text-align:start;color:var(--cream);transition:transform .15s}
+.dk-scan:active,.dk-reply:active,.dk-ava:active{transform:scale(.98)}
+.dk-scan-ic{width:96px;height:96px;border-radius:24px;background:rgba(18,13,46,.55);display:grid;place-items:center;flex-shrink:0;position:relative;overflow:hidden;color:var(--sand)}
+.dk-scan-ic .k-laser{background:linear-gradient(90deg,transparent,var(--sand),transparent);box-shadow:0 0 12px var(--sand)}
+.dk-scan-ic .k-ok .ring{width:62px;height:62px;background:var(--saf)}
+.dk-scan-t{flex:1;display:flex;flex-direction:column;gap:4px;min-width:0}
+.dk-scan-t b{font-size:22px;font-weight:600}
+.dk-scan-t small{font-size:14px;opacity:.75;line-height:1.4}
+.dk-scan .k-demo{align-self:flex-start;background:rgba(255,216,168,.16);color:var(--sand)}
+.dk-below{color:var(--cream)}
+/* Dusk · home */
+.dk-hub-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.dk-chip{padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);font-size:14px;color:var(--sand)}
+.dk-end{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);font-size:14px;white-space:nowrap}
+.dk-concierge{display:flex;flex-direction:column;align-items:center;gap:40px;text-align:center}
+.dk-ava{position:relative;width:196px;height:196px;border-radius:50%;flex-shrink:0;transition:transform .15s}
+.dk-ava .k-ava-media{position:absolute;inset:0;height:auto;border-radius:50%;background:radial-gradient(circle at 38% 32%,#FFF6E6,#F4A259 50%,#4B2A6B);box-shadow:0 0 0 6px rgba(255,255,255,.08),0 0 70px rgba(244,162,89,.5)}
+.dk-ava .k-ava-media::after{display:none}
+.dk-live{position:absolute;left:50%;bottom:-14px;transform:translateX(-50%);z-index:5;display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:999px;background:var(--cream);color:#1A1030;font-size:13px;font-weight:600;white-space:nowrap;box-shadow:0 8px 20px rgba(0,0,0,.3)}
+.dk-live i{width:8px;height:8px;border-radius:50%;background:#2BC48A;box-shadow:0 0 0 4px rgba(43,196,138,.2)}
+.dk-bubble{position:relative;max-width:440px;padding:16px 24px;border-radius:26px;background:var(--cream);color:#1A1030}
+.dk-bubble::before{content:"";position:absolute;top:-10px;left:50%;margin-left:-10px;border:10px solid transparent;border-top:0;border-bottom-color:var(--cream)}
+.dk-bubble small{display:block;font-size:14px;opacity:.6}
+.dk-bubble b{display:block;font-size:24px;font-weight:600;line-height:1.2}
+.dk-bubble span{display:block;font-size:17px;margin-top:4px}
+.dk-replies{display:flex;flex-direction:column;gap:10px}
+.dk-reply{display:grid;grid-template-columns:52px 1fr;column-gap:14px;align-items:center;padding:13px 18px;border-radius:26px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(14px);text-align:start;color:var(--cream);transition:transform .15s}
+.dk-reply i{grid-row:1/3;width:52px;height:52px;border-radius:50%;background:rgba(244,162,89,.2);color:var(--sand);display:grid;place-items:center;font-style:normal;font-weight:700;font-size:14px}
+.dk-reply b{font-size:19px;font-weight:600}
+.dk-reply span{font-size:13.5px;opacity:.72}
+.dk-reply.sos{background:linear-gradient(135deg,rgba(229,72,77,.9),rgba(142,27,58,.9));border-color:rgba(255,154,162,.5)}
+.dk-reply.sos i{background:#fff;color:#C62A31}
+.dk-widgets{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:auto}
+.dk-widgets > div{padding:12px 16px;border-radius:22px;background:rgba(18,13,46,.5);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(10px);display:flex;flex-direction:column;gap:2px}
+.dk-widgets small{font-size:12px;opacity:.65}
+.dk-widgets b{font-size:19px;font-weight:600;font-variant-numeric:tabular-nums}
+.dk-widgets em{font-style:normal;font-size:12.5px;opacity:.75}
+/* Dusk · landscape */
+.land .dk-att{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr auto auto;column-gap:70px;row-gap:18px;padding:30px 90px 0;align-items:center}
+.land .dk-moon{grid-area:1/1/4/2;justify-self:center;width:250px;height:250px}
+.land .dk-moon-core{width:210px;height:210px}
+.land .dk-rot,.land #kRot.dk-rot{grid-area:1/2;align-self:end;align-items:flex-start;text-align:start}
+.land .dk-rot h1{font-size:42px}
+.land .dk-scan{grid-area:2/2}
+.land .dk-below{grid-area:3/2}
+.land .dk-hills{height:26%}
+.land .dk-hub .k-pad{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto 1fr auto;gap:18px 56px;padding:24px 60px 30px}
+.land .dk-hub-head{grid-area:1/1/2/3}
+.land .dk-concierge{grid-area:2/1/4/2;align-self:center}
+.land .dk-ava{width:240px;height:240px}
+.land .dk-replies{grid-area:2/2;align-self:center}
+.land .dk-widgets{grid-area:3/2}
+
+.top-r{display:flex;align-items:center;gap:12px}
+.glang{display:flex;border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px}
+.glang button{padding:7px 14px;border-radius:999px;font-size:14px;color:var(--muted)}
+.glang button.on{background:var(--fg);color:var(--bg);font-weight:600}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px;padding-block:34px;border-top:1px solid var(--line)}
+.stats div{display:flex;flex-direction:column;gap:8px;min-width:0}
+.stats b{font-family:var(--display);font-weight:600;font-size:clamp(34px,4vw,52px);line-height:1;color:var(--gold)}
+.stats span{color:var(--muted);font-size:15px;line-height:1.5}
+.band{padding-block:46px 30px;border-top:1px solid var(--line)}
+.band h2{font-family:var(--display);font-weight:600;font-size:clamp(28px,3.2vw,42px);margin:0 0 10px;text-wrap:balance}
+.band-lead{color:var(--muted);margin:0 0 30px;max-width:62ch;line-height:1.65;font-size:17px}
+.why,.ops{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:30px 34px}
+.card{min-width:0}
+.card svg{color:var(--gold)}
+.card h3{font-size:18px;font-weight:600;margin:12px 0 6px}
+.card p{color:var(--muted);line-height:1.6;margin:0;font-size:15px}
+.tour{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.tour li{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:20px 28px;align-items:start;padding:24px 0;border-bottom:1px solid var(--line)}
+.tn{font-family:var(--display);font-size:30px;color:var(--gold);line-height:1;font-variant-numeric:tabular-nums}
+.tour h3{margin:0 0 8px;font-size:21px;font-weight:600}
+.tour p{margin:0;color:var(--muted);line-height:1.65;max-width:68ch}
+.tour .ben{margin-top:12px;color:var(--fg);display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.tour .ben b{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);font-weight:600}
+.tshow{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:12px;border:1px solid rgba(217,180,106,.45);color:var(--gold);font-size:14px;white-space:nowrap}
+.tshow:hover{background:rgba(217,180,106,.08)}
+[dir="rtl"] .flip{transform:scaleX(-1)}
+.showcase[dir="rtl"] .eyebrow,.showcase[dir="rtl"] .steps-h,.showcase[dir="rtl"] .langs-h,.showcase[dir="rtl"] .proto,.showcase[dir="rtl"] .mark small,.showcase[dir="rtl"] .tour .ben b{letter-spacing:0;text-transform:none}
+.showcase[dir="rtl"] .eyebrow,.showcase[dir="rtl"] .steps-h,.showcase[dir="rtl"] .langs-h{font-size:14px}
+.showcase[dir="rtl"] .lead,.showcase[dir="rtl"] .band-lead,.showcase[dir="rtl"] .card p,.showcase[dir="rtl"] .tour p{line-height:1.85}
+.showcase[dir="rtl"] h1.title{line-height:1.25}
+@media (max-width:980px){.stats,.why,.ops{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:600px){
+  .stats,.why,.ops{grid-template-columns:minmax(0,1fr)}
+  .tour li{grid-template-columns:44px minmax(0,1fr)}
+  .tshow{grid-column:2;justify-self:start}
+  .top-r .proto{display:none}
+}
+
+/* design picker on the presentation page */
+.designs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.designs button{display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:14px;border:1px solid var(--line);text-align:start;color:var(--muted);transition:border-color .2s,color .2s}
+.designs button:hover{color:var(--fg)}
+.designs button.on{border-color:var(--gold);color:var(--fg);background:rgba(217,180,106,.06)}
+.designs .sw{display:flex;gap:4px}
+.designs .sw i{width:22px;height:22px;border-radius:6px;border:1px solid rgba(255,255,255,.15)}
+.designs b{font-size:16px;font-weight:600;color:var(--fg)}
+.designs span{font-size:13px;line-height:1.45}
+@media (max-width:600px){.designs{grid-template-columns:minmax(0,1fr)}}
+.pv-seg{display:flex;border-radius:12px;overflow:hidden;border:1px solid rgba(237,233,242,.18);background:rgba(12,11,16,.8);backdrop-filter:blur(8px)}
+.pv-bar .pv-seg button{border:0;border-radius:0;background:none;padding:10px 14px;color:var(--muted)}
+.pv-bar .pv-seg button.on{background:var(--gold);color:#1A1408}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style>
+
+<div class="showcase">
+  <div class="wrap">
+    <header class="top">
+      <div class="mark">
+        <svg width="34" height="34" viewBox="0 0 100 100" aria-hidden="true"><polygon id="markStar" fill="none" stroke="#D9B46A" stroke-width="5"/></svg>
+        <div><span data-g="brand">Daleel</span><small data-g="brandSub">Smart Hajj kiosk</small></div>
+      </div>
+      <div class="top-r">
+        <span class="proto" data-g="proto">Interactive prototype</span>
+        <div class="glang" role="group" aria-label="Page language"><button data-glang="en" lang="en">English</button><button data-glang="ar" lang="ar">العربية</button></div>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="copy">
+        <div class="eyebrow" data-g="eyebrow"></div>
+        <h1 class="title" data-gh="h1"></h1>
+        <p class="lead" data-g="lead"></p>
+
+        <div class="cta-row"><button class="btn-demo" id="openDemo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><span data-g="cta"></span></button><span data-g="ctaNote"></span></div>
+
+        <div class="steps-h" data-g="designsH"></div>
+        <div class="designs" id="designs"></div>
+
+        <div class="steps-h" data-g="stepsH"></div>
+        <ol class="steps" id="steps"></ol>
+
+        <div class="langs-h" data-g="kioskLang"></div>
+        <div class="langs" id="langs"></div>
+
+        <p class="tip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11V5a1.5 1.5 0 0 1 3 0v6M12 10V8.5a1.5 1.5 0 0 1 3 0V11M15 10.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-1a6 6 0 0 1-5-2.7L4 15.5a1.5 1.5 0 0 1 2.5-1.7L9 16"/></svg><span data-g="tip"></span></p>
+      </div>
+
+      <div class="kcol" id="kcol">
+        <div class="fit" id="fit">
+          <div class="totem" id="totem">
+            <div class="t-aura"></div>
+            <div class="t-floor"></div>
+            <div class="t-plinth"></div>
+            <div class="t-side"><i class="led p"></i><i class="led c"></i></div>
+            <div class="t-body">
+              <div class="t-cam"></div>
+              <div class="t-bezel" id="bezel"><div id="app" data-lang="ar"></div><div class="t-glare"></div></div>
+              <div class="t-slot"></div>
+              <div class="t-slot-l">NUSUK SCANNER</div>
+              <div class="t-word" id="tWord">دليل</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats" id="stats" aria-label="Key facts"></section>
+
+    <section class="band">
+      <h2 data-g="whyH"></h2>
+      <p class="band-lead" data-g="whyP"></p>
+      <div class="why" id="why"></div>
+    </section>
+
+    <section class="band">
+      <h2 data-g="tourH"></h2>
+      <p class="band-lead" data-g="tourP"></p>
+      <ol class="tour" id="tour"></ol>
+    </section>
+
+    <section class="band">
+      <h2 data-g="opsH"></h2>
+      <p class="band-lead" data-g="opsP"></p>
+      <div class="ops" id="ops"></div>
+      <div class="specs" id="specs"></div>
+    </section>
+
+    <footer class="foot">
+      <span data-g="foot1"></span>
+      <span data-gh="foot2"></span>
+    </footer>
+  </div>
+</div>
+
+<div class="pv-bar idle" id="pvBar"><div class="pv-seg" id="pvDesign"></div><button id="pvOrient"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M3 12a9 9 0 0 1 3-6.7M21 12a9 9 0 0 1-3 6.7"/></svg><span>Landscape</span></button><button id="pvExit"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg><span>Exit demo</span></button></div>
+
+<script>
+/* ═════════ CONFIG ═════════ */
+const CONFIG = {
+  avatarUrl: 'https://embed.liveavatar.com/v1/130f40c2-4c2a-4c3d-ba10-c44ae812e1cd',
+  avatarPoster: '',
+  idleKiosk: 45000, idleShowcase: 120000, idleAI: 180000, warnSec: 8, sosHoldMs: 3000,
+  pilgrimPhoto: '',   // e.g. 'assets/pilgrim.jpg' — leave empty for the illustrated placeholder
+  kioskLogo: '',      // e.g. 'assets/logo.png' — replaces the glowing wordmark under the screen
+};
+const HASH = location.hash.slice(1);
+const KIOSK = /^kiosk/.test(HASH);
+const DESIGNS = [
+  { id:'khatam', name:'Khatam', desc:'Emerald and gold, built on the eight-point star of Islamic geometry.', sw:['#0E3B33','#D9B46A','#FBF8F1'] },
+  { id:'signal', name:'Signal', desc:'Airport-style wayfinding signage. High contrast, readable in full sun and for low vision.', sw:['#0A0A0A','#FFD400','#FFFFFF'] },
+  { id:'dusk', name:'Dusk', desc:'A voice-first concierge under the evening sky over Arafat.', sw:['#241A4C','#F4A259','#E86A7A'] },
+];
+const START_THEME = (DESIGNS.find(d => HASH === d.id || HASH === 'kiosk-' + d.id) || DESIGNS[0]).id;
+// The AI uses the LiveAvatar iframe. If the host page blocks embeds, it falls back to a demo conversation.
+let aiFallback = location.hash === '#preview';
+
+/* ═════════ LANGUAGES & COPY ═════════ */
+const LANGS = [
+  { code:'ar', label:'العربية', en:'Arabic', short:'AR', dir:'rtl' },
+  { code:'en', label:'English', en:'English', short:'EN', dir:'ltr' },
+  { code:'ur', label:'اردو', en:'Urdu', short:'UR', dir:'rtl' },
+  { code:'fr', label:'Français', en:'French', short:'FR', dir:'ltr' },
+  { code:'fa', label:'فارسی', en:'Persian', short:'FA', dir:'rtl' },
+  { code:'zh', label:'中文', en:'Chinese', short:'ZH', dir:'ltr' },
+  { code:'id', label:'Bahasa Indonesia', en:'Indonesian', short:'ID', dir:'ltr', more:1 },
+  { code:'tr', label:'Türkçe', en:'Turkish', short:'TR', dir:'ltr', more:1 },
+  { code:'bn', label:'বাংলা', en:'Bengali', short:'BN', dir:'ltr', more:1 },
+  { code:'ms', label:'Bahasa Melayu', en:'Malay', short:'MS', dir:'ltr', more:1 },
+  { code:'ru', label:'Русский', en:'Russian', short:'RU', dir:'ltr', more:1 },
+  { code:'sw', label:'Kiswahili', en:'Swahili', short:'SW', dir:'ltr', more:1 },
+];
+const PRIMARY = LANGS.filter(l => !l.more);
+const T = {
+ar:{help:'كيف يمكنني مساعدتك اليوم؟',moreLangs:'لغات أخرى',allLangs:'جميع اللغات',chatNow:'المس للتحدث',openLive:'تحدث مع الأفاتار المباشر',dir:'rtl',nm:'دليل',loc:'منى · البوابة 12',hijri:'8 ذو الحجة 1448',welcome:'أهلاً بضيوف الرحمن',welcomeSub:'دليلك إلى المخيمات والخدمات والمساعدة، بلغتك.',scan:'امسح بطاقة نسك',scanHint:'ضع رمز QR أمام الماسح أسفل الشاشة',scannerBelow:'الماسح بالأسفل',tapDemo:'للعرض: المس نافذة المسح',verified:'تم التحقق من هويتك',nat:'الجنسية',natVal:'مصر',camp:'المخيم',campVal:'منى · 42B',provider:'مقدم الخدمة',providerVal:'شركة السعادة للحج',pilgrim:'محمد عبدالله',hajjYear:'حج 1448',chooseLang:'اختر لغتك',cont:'متابعة',greet:'السلام عليكم،',hajjDays:'أيام الحج · ذو الحجة',dayNow:'يوم التروية · المبيت في منى',nextPrayer:'الصلاة القادمة',inTime:'بعد {h} س {m} د',heat:'تنبيه حرارة',heatTip:'اشرب الماء واستظل',wf:'الإرشاد للطريق',wfSub:'مخيمك والمرافق القريبة',ai:'دليل · المساعد الذكي',aiSub:'اسأل بصوتك وبلغتك',em:'الطوارئ والمساعدة',emSub:'استغاثة فورية وأرقام مباشرة',endSession:'إنهاء',emTitle:'الطوارئ والمساعدة',sosHold:'اضغط مطولاً 3 ثوانٍ',sosHolding:'استمر بالضغط…',sosSentT:'المساعدة في الطريق',sosSentS:'تمت مشاركة موقعك مع فريق الاستجابة',sosEta:'الوصول المتوقع: 4 دقائق تقريباً',cancelAlert:'إلغاء البلاغ',contacts:'خطوط مباشرة',c911:'الطوارئ الموحد',c997:'الهلال الأحمر',cProv:'شركة الحج',cNusuk:'نسك عناية',cNusukS:'متاح على مدار الساعة',connecting:'جارٍ الاتصال بـ',endCall:'إنهاء الاتصال',wfTitle:'الإرشاد للطريق',wfQ:'إلى أين تريد الذهاب؟',oCamp:'مخيمي',oHosp:'أقرب مستشفى',oPolice:'أقرب مركز شرطة',oNusuk:'مركز نسك عناية',nearest:'الأقرب',walk:'{m} د مشياً',mu:'م',min:'د',low:'خفيف',med:'متوسط',high:'مزدحم',nearby:'{n} خيارات قريبة',select:'اختر',selected:'محدد',sendPhone:'أرسل للجوال',scanPhone:'امسح لفتح المسار على جوالك',close:'إغلاق',youHere:'أنت هنا',jamarat:'الجمرات',khaif:'مسجد الخيف',metro:'قطار المشاعر',aiHello:'أنا دليل، مساعدك في الحج',aiSub2:'اسألني أي شيء بصوتك',tryAsk:'جرّب أن تسأل',q1:'أين مخيمي؟',a1:'مخيمك 42B على بعد 400 متر. اتبع المسار الذهبي على الخريطة، حوالي 6 دقائق مشياً.',q2:'ما مناسك اليوم؟',a2:'اليوم يوم التروية. يبيت الحجاج في منى ويصلّون كل صلاة في وقتها مع قصر الرباعية.',q3:'أشعر بتعب من الحر',a3:'انتقل إلى الظل واشرب الماء الآن. يمكنني الاتصال بالهلال الأحمر 997 أو إرشادك لأقرب عيادة على بعد 850 متراً.',listening:'أستمع إليك…',tapMic:'المس الميكروفون وتحدث',liveNote:'الأفاتار المباشر يعمل على جهاز الكشك',back:'رجوع',idleQ:'هل ما زلت هنا؟',idleBtn:'نعم، متابعة',loading:'جارٍ تجهيز دليل…',prayers:['الفجر','الظهر','العصر','المغرب','العشاء']},
+en:{help:'How can I help you today?',moreLangs:'More languages',allLangs:'All languages',chatNow:'Tap to talk',openLive:'Talk to the live avatar',dir:'ltr',nm:'Daleel',loc:'Mina · Gate 12',hijri:'8 Dhul Hijjah 1448',welcome:'Welcome, Guests of the Most Merciful',welcomeSub:'Your guide to camps, services and help, in your language.',scan:'Scan your Nusuk card',scanHint:'Hold the QR code to the scanner below the screen',scannerBelow:'Scanner below',tapDemo:'Demo: tap the scan window',verified:'Identity verified',nat:'Nationality',natVal:'Egypt',camp:'Camp',campVal:'Mina · 42B',provider:'Service provider',providerVal:'Al Saada Hajj Company',pilgrim:'Mohammad Abdullah',hajjYear:'Hajj 1448',chooseLang:'Choose your language',cont:'Continue',greet:'Peace be upon you,',hajjDays:'Hajj days · Dhul Hijjah',dayNow:'Day of Tarwiyah · overnight in Mina',nextPrayer:'Next prayer',inTime:'in {h}h {m}m',heat:'Heat alert',heatTip:'Drink water, stay in the shade',wf:'Wayfinding',wfSub:'Your camp and nearby services',ai:'Daleel · AI guide',aiSub:'Ask by voice, in your language',em:'Emergency & help',emSub:'Instant SOS and direct lines',endSession:'End',emTitle:'Emergency & help',sosHold:'Press and hold for 3 seconds',sosHolding:'Keep holding…',sosSentT:'Help is on the way',sosSentS:'Your location was shared with the response team',sosEta:'Estimated arrival: about 4 min',cancelAlert:'Cancel alert',contacts:'Direct lines',c911:'Unified emergency',c997:'Red Crescent',cProv:'Your Hajj provider',cNusuk:'Nusuk Care',cNusukS:'Available 24/7',connecting:'Connecting to',endCall:'End call',wfTitle:'Wayfinding',wfQ:'Where would you like to go?',oCamp:'My camp',oHosp:'Nearest hospital',oPolice:'Nearest police station',oNusuk:'Nusuk Care center',nearest:'Nearest',walk:'{m} min walk',mu:'m',min:'min',low:'Light',med:'Moderate',high:'Busy',nearby:'{n} nearby',select:'Select',selected:'Selected',sendPhone:'Send to phone',scanPhone:'Scan to open the route on your phone',close:'Close',youHere:'You are here',jamarat:'Jamarat',khaif:'Al-Khaif Mosque',metro:'Mashaaer Metro',aiHello:'I’m Daleel, your Hajj guide',aiSub2:'Ask me anything, out loud',tryAsk:'Try asking',q1:'Where is my camp?',a1:'Your camp 42B is 400 m ahead. Follow the gold route on the map, about 6 minutes on foot.',q2:'What are today’s rites?',a2:'Today is the Day of Tarwiyah. Pilgrims stay in Mina and pray each prayer on time, shortening the four-unit prayers.',q3:'The heat is making me unwell',a3:'Move to the shade and drink water now. I can call the Red Crescent (997) or guide you to the nearest clinic, 850 m away.',listening:'Listening…',tapMic:'Tap the mic and speak',liveNote:'The live avatar runs on the kiosk itself',back:'Back',idleQ:'Are you still there?',idleBtn:'Yes, continue',loading:'Getting Daleel ready…',prayers:['Fajr','Dhuhr','Asr','Maghrib','Isha']},
+ur:{help:'آج میں آپ کی کیسے مدد کروں؟',moreLangs:'مزید زبانیں',allLangs:'تمام زبانیں',chatNow:'بات کرنے کے لیے چھوئیں',openLive:'لائیو اوتار سے بات کریں',dir:'rtl',nm:'دلیل',loc:'منیٰ · گیٹ 12',hijri:'8 ذوالحجہ 1448',welcome:'رحمٰن کے مہمانوں، خوش آمدید',welcomeSub:'خیموں، خدمات اور مدد کے لیے آپ کا رہنما، آپ کی زبان میں۔',scan:'اپنا نسک کارڈ اسکین کریں',scanHint:'QR کوڈ اسکرین کے نیچے اسکینر کے سامنے رکھیں',scannerBelow:'اسکینر نیچے ہے',tapDemo:'ڈیمو: اسکین ونڈو کو چھوئیں',verified:'آپ کی شناخت کی تصدیق ہو گئی',nat:'قومیت',natVal:'مصر',camp:'کیمپ',campVal:'منیٰ · 42B',provider:'خدمت فراہم کنندہ',providerVal:'السعادة حج کمپنی',pilgrim:'محمد عبداللہ',hajjYear:'حج 1448',chooseLang:'اپنی زبان منتخب کریں',cont:'جاری رکھیں',greet:'السلام علیکم،',hajjDays:'ایامِ حج · ذوالحجہ',dayNow:'یوم الترویہ · منیٰ میں قیام',nextPrayer:'اگلی نماز',inTime:'{h} گھنٹے {m} منٹ میں',heat:'گرمی کا انتباہ',heatTip:'پانی پئیں اور سائے میں رہیں',wf:'راستے کی رہنمائی',wfSub:'آپ کا کیمپ اور قریبی سہولیات',ai:'دلیل · ذہین معاون',aiSub:'اپنی آواز اور زبان میں پوچھیں',em:'ہنگامی مدد',emSub:'فوری SOS اور براہِ راست نمبر',endSession:'ختم',emTitle:'ہنگامی مدد',sosHold:'3 سیکنڈ تک دبائے رکھیں',sosHolding:'دبائے رکھیں…',sosSentT:'مدد آ رہی ہے',sosSentS:'آپ کا مقام ریسپانس ٹیم کو بھیج دیا گیا',sosEta:'متوقع آمد: تقریباً 4 منٹ',cancelAlert:'الرٹ منسوخ کریں',contacts:'براہِ راست لائنیں',c911:'متحدہ ایمرجنسی',c997:'ہلالِ احمر',cProv:'آپ کی حج کمپنی',cNusuk:'نسک عنایت',cNusukS:'چوبیس گھنٹے دستیاب',connecting:'رابطہ کیا جا رہا ہے',endCall:'کال ختم کریں',wfTitle:'راستے کی رہنمائی',wfQ:'آپ کہاں جانا چاہتے ہیں؟',oCamp:'میرا کیمپ',oHosp:'قریب ترین ہسپتال',oPolice:'قریب ترین پولیس اسٹیشن',oNusuk:'نسک عنایت مرکز',nearest:'قریب ترین',walk:'{m} منٹ پیدل',mu:'میٹر',min:'منٹ',low:'کم',med:'درمیانہ',high:'زیادہ',nearby:'{n} قریبی مقامات',select:'منتخب کریں',selected:'منتخب',sendPhone:'فون پر بھیجیں',scanPhone:'راستہ فون پر کھولنے کے لیے اسکین کریں',close:'بند کریں',youHere:'آپ یہاں ہیں',jamarat:'جمرات',khaif:'مسجد خیف',metro:'مشاعر ٹرین',aiHello:'میں دلیل ہوں، آپ کا حج رہنما',aiSub2:'اپنی آواز میں کچھ بھی پوچھیں',tryAsk:'یہ پوچھ کر دیکھیں',q1:'میرا کیمپ کہاں ہے؟',a1:'آپ کا کیمپ 42B چار سو میٹر آگے ہے۔ نقشے پر سنہری راستے پر چلیں، تقریباً 6 منٹ پیدل۔',q2:'آج کے مناسک کیا ہیں؟',a2:'آج یوم الترویہ ہے۔ حجاج منیٰ میں قیام کرتے ہیں اور ہر نماز اپنے وقت پر قصر کے ساتھ پڑھتے ہیں۔',q3:'گرمی سے طبیعت خراب ہے',a3:'فوراً سائے میں جائیں اور پانی پئیں۔ میں ہلالِ احمر 997 کو کال کر سکتا ہوں یا 850 میٹر دور قریب ترین کلینک دکھا سکتا ہوں۔',listening:'سن رہا ہوں…',tapMic:'مائیک چھوئیں اور بولیں',liveNote:'لائیو اوتار کیوسک پر چلتا ہے',back:'واپس',idleQ:'کیا آپ ابھی یہاں ہیں؟',idleBtn:'ہاں، جاری رکھیں',loading:'دلیل تیار ہو رہا ہے…',prayers:['فجر','ظہر','عصر','مغرب','عشاء']},
+fr:{help:'Comment puis-je vous aider aujourd’hui ?',moreLangs:'Autres langues',allLangs:'Toutes les langues',chatNow:'Touchez pour parler',openLive:'Parler à l’avatar en direct',dir:'ltr',nm:'Daleel',loc:'Mina · Porte 12',hijri:'8 Dhou al-Hijja 1448',welcome:'Bienvenue aux invités du Tout-Miséricordieux',welcomeSub:'Votre guide vers les camps, les services et l’aide, dans votre langue.',scan:'Scannez votre carte Nusuk',scanHint:'Présentez le QR code au lecteur sous l’écran',scannerBelow:'Lecteur en bas',tapDemo:'Démo : touchez la fenêtre de scan',verified:'Identité vérifiée',nat:'Nationalité',natVal:'Égypte',camp:'Camp',campVal:'Mina · 42B',provider:'Prestataire',providerVal:'Al Saada Hajj Company',pilgrim:'Mohammad Abdullah',hajjYear:'Hajj 1448',chooseLang:'Choisissez votre langue',cont:'Continuer',greet:'Que la paix soit sur vous,',hajjDays:'Jours du Hajj · Dhou al-Hijja',dayNow:'Jour de Tarwiyah · nuit à Mina',nextPrayer:'Prochaine prière',inTime:'dans {h} h {m} min',heat:'Alerte chaleur',heatTip:'Buvez et restez à l’ombre',wf:'Orientation',wfSub:'Votre camp et les services proches',ai:'Daleel · guide IA',aiSub:'Demandez à voix haute, dans votre langue',em:'Urgences et aide',emSub:'SOS immédiat et lignes directes',endSession:'Terminer',emTitle:'Urgences et aide',sosHold:'Maintenez 3 secondes',sosHolding:'Continuez d’appuyer…',sosSentT:'Les secours arrivent',sosSentS:'Votre position a été transmise à l’équipe d’intervention',sosEta:'Arrivée estimée : environ 4 min',cancelAlert:'Annuler l’alerte',contacts:'Lignes directes',c911:'Urgences unifiées',c997:'Croissant-Rouge',cProv:'Votre agence de Hajj',cNusuk:'Nusuk Care',cNusukS:'Disponible 24 h/24',connecting:'Appel en cours :',endCall:'Raccrocher',wfTitle:'Orientation',wfQ:'Où souhaitez-vous aller ?',oCamp:'Mon camp',oHosp:'Hôpital le plus proche',oPolice:'Poste de police le plus proche',oNusuk:'Centre Nusuk Care',nearest:'Le plus proche',walk:'{m} min à pied',mu:'m',min:'min',low:'Faible',med:'Moyenne',high:'Forte',nearby:'{n} lieux proches',select:'Choisir',selected:'Choisi',sendPhone:'Sur mon téléphone',scanPhone:'Scannez pour ouvrir l’itinéraire sur votre téléphone',close:'Fermer',youHere:'Vous êtes ici',jamarat:'Jamarat',khaif:'Mosquée Al-Khaif',metro:'Métro des Lieux saints',aiHello:'Je suis Daleel, votre guide du Hajj',aiSub2:'Posez-moi vos questions à voix haute',tryAsk:'Essayez de demander',q1:'Où est mon camp ?',a1:'Votre camp 42B est à 400 m. Suivez l’itinéraire doré sur la carte, environ 6 minutes à pied.',q2:'Quels sont les rites du jour ?',a2:'C’est le jour de Tarwiyah. Les pèlerins restent à Mina et accomplissent chaque prière à son heure, en raccourcissant celles de quatre unités.',q3:'La chaleur me fatigue',a3:'Mettez-vous à l’ombre et buvez de l’eau. Je peux appeler le Croissant-Rouge (997) ou vous guider vers la clinique la plus proche, à 850 m.',listening:'Je vous écoute…',tapMic:'Touchez le micro et parlez',liveNote:'L’avatar en direct fonctionne sur la borne',back:'Retour',idleQ:'Êtes-vous toujours là ?',idleBtn:'Oui, continuer',loading:'Préparation de Daleel…',prayers:['Fajr','Dhuhr','Asr','Maghrib','Icha']},
+fa:{help:'امروز چطور می‌توانم کمکتان کنم؟',moreLangs:'زبان‌های بیشتر',allLangs:'همه زبان‌ها',chatNow:'برای گفتگو لمس کنید',openLive:'با آواتار زنده صحبت کنید',dir:'rtl',nm:'دلیل',loc:'منا · دروازه 12',hijri:'8 ذی‌الحجه 1448',welcome:'به مهمانان خدای رحمان خوش آمدید',welcomeSub:'راهنمای شما به اردوگاه‌ها، خدمات و کمک، به زبان خودتان.',scan:'کارت نسک خود را اسکن کنید',scanHint:'کد QR را مقابل اسکنر زیر صفحه بگیرید',scannerBelow:'اسکنر پایین است',tapDemo:'نمایشی: پنجره اسکن را لمس کنید',verified:'هویت شما تأیید شد',nat:'ملیت',natVal:'مصر',camp:'اردوگاه',campVal:'منا · 42B',provider:'ارائه‌دهنده خدمات',providerVal:'شرکت السعادة للحج',pilgrim:'محمد عبدالله',hajjYear:'حج 1448',chooseLang:'زبان خود را انتخاب کنید',cont:'ادامه',greet:'سلام علیکم،',hajjDays:'روزهای حج · ذی‌الحجه',dayNow:'روز ترویه · اقامت در منا',nextPrayer:'نماز بعدی',inTime:'{h} ساعت و {m} دقیقه دیگر',heat:'هشدار گرما',heatTip:'آب بنوشید و در سایه بمانید',wf:'مسیریابی',wfSub:'اردوگاه شما و امکانات نزدیک',ai:'دلیل · راهنمای هوشمند',aiSub:'با صدای خود و به زبان خود بپرسید',em:'اورژانس و کمک',emSub:'SOS فوری و خطوط مستقیم',endSession:'پایان',emTitle:'اورژانس و کمک',sosHold:'3 ثانیه نگه دارید',sosHolding:'نگه دارید…',sosSentT:'کمک در راه است',sosSentS:'موقعیت شما برای تیم امداد ارسال شد',sosEta:'زمان رسیدن: حدود 4 دقیقه',cancelAlert:'لغو هشدار',contacts:'خطوط مستقیم',c911:'اورژانس یکپارچه',c997:'هلال احمر',cProv:'شرکت حج شما',cNusuk:'نسک عنایت',cNusukS:'شبانه‌روزی',connecting:'در حال تماس با',endCall:'پایان تماس',wfTitle:'مسیریابی',wfQ:'کجا می‌خواهید بروید؟',oCamp:'اردوگاه من',oHosp:'نزدیک‌ترین بیمارستان',oPolice:'نزدیک‌ترین پلیس',oNusuk:'مرکز نسک عنایت',nearest:'نزدیک‌ترین',walk:'{m} دقیقه پیاده',mu:'متر',min:'دقیقه',low:'کم',med:'متوسط',high:'شلوغ',nearby:'{n} مکان نزدیک',select:'انتخاب',selected:'انتخاب شد',sendPhone:'ارسال به گوشی',scanPhone:'برای باز کردن مسیر در گوشی اسکن کنید',close:'بستن',youHere:'شما اینجا هستید',jamarat:'جمرات',khaif:'مسجد خیف',metro:'قطار مشاعر',aiHello:'من دلیل هستم، راهنمای حج شما',aiSub2:'هر سؤالی دارید با صدای خود بپرسید',tryAsk:'این را بپرسید',q1:'اردوگاهم کجاست؟',a1:'اردوگاه 42B شما 400 متر جلوتر است. مسیر طلایی روی نقشه را دنبال کنید، حدود 6 دقیقه پیاده.',q2:'مناسک امروز چیست؟',a2:'امروز روز ترویه است. حجاج در منا می‌مانند و هر نماز را در وقت خودش و به‌صورت شکسته می‌خوانند.',q3:'از گرما حالم بد است',a3:'به سایه بروید و آب بنوشید. می‌توانم با هلال احمر 997 تماس بگیرم یا شما را به نزدیک‌ترین درمانگاه در 850 متری راهنمایی کنم.',listening:'گوش می‌دهم…',tapMic:'میکروفون را لمس کنید و صحبت کنید',liveNote:'آواتار زنده روی کیوسک اجرا می‌شود',back:'بازگشت',idleQ:'هنوز اینجا هستید؟',idleBtn:'بله، ادامه',loading:'آماده‌سازی دلیل…',prayers:['صبح','ظهر','عصر','مغرب','عشا']},
+zh:{help:'今天我能帮您什么？',moreLangs:'更多语言',allLangs:'全部语言',chatNow:'轻触开始对话',openLive:'与实时数字人对话',dir:'ltr',nm:'Daleel',loc:'米纳 · 12号门',hijri:'1448年 都尔黑哲月8日',welcome:'欢迎至仁主的客人',welcomeSub:'用您的语言，为您指引营地、服务与求助。',scan:'请扫描您的 Nusuk 卡',scanHint:'将二维码对准屏幕下方的扫描器',scannerBelow:'扫描器在下方',tapDemo:'演示：轻触扫描窗口',verified:'身份已验证',nat:'国籍',natVal:'埃及',camp:'营地',campVal:'米纳 · 42B',provider:'服务机构',providerVal:'Al Saada 朝觐公司',pilgrim:'穆罕默德·阿卜杜拉',hajjYear:'1448年朝觐',chooseLang:'请选择语言',cont:'继续',greet:'愿您平安，',hajjDays:'朝觐日 · 都尔黑哲月',dayNow:'塔尔维亚日 · 在米纳过夜',nextPrayer:'下次礼拜',inTime:'{h}小时{m}分钟后',heat:'高温预警',heatTip:'多喝水，留在阴凉处',wf:'路线导览',wfSub:'您的营地与附近设施',ai:'Daleel · 智能向导',aiSub:'用您的语言语音提问',em:'紧急求助',emSub:'一键SOS与直拨热线',endSession:'结束',emTitle:'紧急求助',sosHold:'长按3秒',sosHolding:'请继续按住…',sosSentT:'救援正在赶来',sosSentS:'您的位置已发送给救援团队',sosEta:'预计约4分钟到达',cancelAlert:'取消求助',contacts:'直拨热线',c911:'统一紧急电话',c997:'红新月会',cProv:'您的朝觐公司',cNusuk:'Nusuk 关怀',cNusukS:'24小时服务',connecting:'正在接通',endCall:'挂断',wfTitle:'路线导览',wfQ:'您想去哪里？',oCamp:'我的营地',oHosp:'最近的医院',oPolice:'最近的警察局',oNusuk:'Nusuk 关怀中心',nearest:'最近',walk:'步行{m}分钟',mu:'米',min:'分钟',low:'人少',med:'适中',high:'拥挤',nearby:'附近{n}处',select:'选择',selected:'已选',sendPhone:'发送到手机',scanPhone:'扫码在手机上打开路线',close:'关闭',youHere:'您在这里',jamarat:'投石桥',khaif:'海夫清真寺',metro:'圣地铁路',aiHello:'我是 Daleel，您的朝觐向导',aiSub2:'随时用语音向我提问',tryAsk:'试着问',q1:'我的营地在哪里？',a1:'您的42B营地在前方400米。沿地图上的金色路线步行约6分钟。',q2:'今天有哪些功课？',a2:'今天是塔尔维亚日。朝觐者留在米纳，按时礼拜，四拜的礼拜缩短为两拜。',q3:'我被晒得不舒服',a3:'请马上到阴凉处并喝水。我可以帮您拨打红新月会997，或带您去850米外最近的诊所。',listening:'正在聆听…',tapMic:'轻触麦克风说话',liveNote:'实时数字人在自助终端上运行',back:'返回',idleQ:'您还在吗？',idleBtn:'是的，继续',loading:'正在准备 Daleel…',prayers:['晨礼','晌礼','晡礼','昏礼','宵礼']},
+id:{help:'Apa yang bisa saya bantu hari ini?',dir:'ltr',nm:'Daleel',loc:'Mina · Gerbang 12',hijri:'8 Zulhijah 1448',welcome:'Selamat datang, tamu Allah Yang Maha Pengasih',welcomeSub:'Panduan Anda ke tenda, layanan, dan bantuan, dalam bahasa Anda.',scan:'Pindai kartu Nusuk Anda',scanHint:'Arahkan kode QR ke pemindai di bawah layar',scannerBelow:'Pemindai di bawah',tapDemo:'Demo: ketuk jendela pindai',verified:'Identitas terverifikasi',nat:'Kewarganegaraan',natVal:'Mesir',camp:'Tenda',campVal:'Mina · 42B',provider:'Penyelenggara',providerVal:'Al Saada Hajj Company',pilgrim:'Mohammad Abdullah',hajjYear:'Haji 1448',chooseLang:'Pilih bahasa Anda',cont:'Lanjutkan',greet:'Assalamualaikum,',hajjDays:'Hari haji · Zulhijah',dayNow:'Hari Tarwiyah · bermalam di Mina',nextPrayer:'Salat berikutnya',inTime:'{h} j {m} mnt lagi',heat:'Peringatan panas',heatTip:'Minum air, tetap di tempat teduh',wf:'Penunjuk arah',wfSub:'Tenda Anda dan layanan terdekat',ai:'Daleel · pemandu AI',aiSub:'Tanya dengan suara, dalam bahasa Anda',em:'Darurat & bantuan',emSub:'SOS instan dan saluran langsung',endSession:'Selesai',emTitle:'Darurat & bantuan',sosHold:'Tekan dan tahan 3 detik',sosHolding:'Terus tahan…',sosSentT:'Bantuan sedang menuju',sosSentS:'Lokasi Anda telah dikirim ke tim tanggap darurat',sosEta:'Perkiraan tiba: sekitar 4 menit',cancelAlert:'Batalkan peringatan',contacts:'Saluran langsung',c911:'Darurat terpadu',c997:'Bulan Sabit Merah',cProv:'Penyelenggara haji Anda',cNusuk:'Nusuk Care',cNusukS:'Tersedia 24 jam',connecting:'Menghubungkan ke',endCall:'Akhiri panggilan',wfTitle:'Penunjuk arah',wfQ:'Ke mana Anda ingin pergi?',oCamp:'Tenda saya',oHosp:'Rumah sakit terdekat',oPolice:'Kantor polisi terdekat',oNusuk:'Pusat Nusuk Care',nearest:'Terdekat',walk:'{m} mnt jalan kaki',mu:'m',min:'mnt',low:'Sepi',med:'Sedang',high:'Padat',nearby:'{n} terdekat',select:'Pilih',selected:'Dipilih',sendPhone:'Kirim ke ponsel',scanPhone:'Pindai untuk membuka rute di ponsel Anda',close:'Tutup',youHere:'Anda di sini',jamarat:'Jamarat',khaif:'Masjid Al-Khaif',metro:'Kereta Masyair',aiHello:'Saya Daleel, pemandu haji Anda',aiSub2:'Tanyakan apa saja dengan suara',tryAsk:'Coba tanyakan',q1:'Di mana tenda saya?',a1:'Tenda 42B Anda 400 m di depan. Ikuti rute emas di peta, sekitar 6 menit berjalan kaki.',q2:'Apa manasik hari ini?',a2:'Hari ini Hari Tarwiyah. Jemaah tinggal di Mina dan salat tepat waktu, dengan mengqasar salat empat rakaat.',q3:'Saya tidak enak badan karena panas',a3:'Segera ke tempat teduh dan minum air. Saya bisa menghubungi Bulan Sabit Merah (997) atau mengarahkan Anda ke klinik terdekat, 850 m dari sini.',listening:'Mendengarkan…',tapMic:'Ketuk mikrofon dan bicara',liveNote:'Avatar langsung berjalan di kios',back:'Kembali',idleQ:'Apakah Anda masih di sini?',idleBtn:'Ya, lanjutkan',loading:'Menyiapkan Daleel…',prayers:['Subuh','Zuhur','Asar','Magrib','Isya'],openLive:'Bicara dengan avatar langsung',moreLangs:'Bahasa lain',allLangs:'Semua bahasa',chatNow:'Ketuk untuk bicara'},
+tr:{help:'Bugün size nasıl yardımcı olabilirim?',dir:'ltr',nm:'Daleel',loc:'Mina · Kapı 12',hijri:'8 Zilhicce 1448',welcome:'Rahmân’ın misafirleri, hoş geldiniz',welcomeSub:'Çadırlara, hizmetlere ve yardıma rehberiniz; kendi dilinizde.',scan:'Nusuk kartınızı okutun',scanHint:'QR kodu ekranın altındaki okuyucuya tutun',scannerBelow:'Okuyucu aşağıda',tapDemo:'Demo: tarama penceresine dokunun',verified:'Kimlik doğrulandı',nat:'Uyruk',natVal:'Mısır',camp:'Çadır',campVal:'Mina · 42B',provider:'Hizmet sağlayıcı',providerVal:'Al Saada Hajj Company',pilgrim:'Mohammad Abdullah',hajjYear:'Hac 1448',chooseLang:'Dilinizi seçin',cont:'Devam',greet:'Esselâmü aleyküm,',hajjDays:'Hac günleri · Zilhicce',dayNow:'Terviye günü · Mina’da geceleme',nextPrayer:'Sonraki namaz',inTime:'{h} sa {m} dk sonra',heat:'Sıcaklık uyarısı',heatTip:'Su için, gölgede kalın',wf:'Yol bulma',wfSub:'Çadırınız ve yakındaki hizmetler',ai:'Daleel · yapay zekâ rehberi',aiSub:'Sesli sorun, kendi dilinizde',em:'Acil durum ve yardım',emSub:'Anında SOS ve doğrudan hatlar',endSession:'Bitir',emTitle:'Acil durum ve yardım',sosHold:'3 saniye basılı tutun',sosHolding:'Basılı tutmaya devam edin…',sosSentT:'Yardım yolda',sosSentS:'Konumunuz müdahale ekibiyle paylaşıldı',sosEta:'Tahmini varış: yaklaşık 4 dk',cancelAlert:'Uyarıyı iptal et',contacts:'Doğrudan hatlar',c911:'Birleşik acil hat',c997:'Kızılay',cProv:'Hac şirketiniz',cNusuk:'Nusuk Care',cNusukS:'7/24 hizmet',connecting:'Bağlanıyor:',endCall:'Aramayı bitir',wfTitle:'Yol bulma',wfQ:'Nereye gitmek istersiniz?',oCamp:'Çadırım',oHosp:'En yakın hastane',oPolice:'En yakın karakol',oNusuk:'Nusuk Care merkezi',nearest:'En yakın',walk:'{m} dk yürüme',mu:'m',min:'dk',low:'Sakin',med:'Orta',high:'Kalabalık',nearby:'Yakında {n} yer',select:'Seç',selected:'Seçildi',sendPhone:'Telefona gönder',scanPhone:'Rotayı telefonunuzda açmak için okutun',close:'Kapat',youHere:'Buradasınız',jamarat:'Cemerat',khaif:'Hayf Mescidi',metro:'Meşair Treni',aiHello:'Ben Daleel, hac rehberiniz',aiSub2:'Bana sesli olarak her şeyi sorabilirsiniz',tryAsk:'Şunu sorun',q1:'Çadırım nerede?',a1:'42B çadırınız 400 m ileride. Haritadaki altın rotayı izleyin, yürüyerek yaklaşık 6 dakika.',q2:'Bugünün menasiki neler?',a2:'Bugün Terviye günü. Hacılar Mina’da kalır ve her namazı vaktinde, dört rekâtlıları kısaltarak kılar.',q3:'Sıcaktan rahatsızlandım',a3:'Hemen gölgeye geçin ve su için. Kızılay’ı (997) arayabilir veya sizi 850 m ötedeki en yakın kliniğe yönlendirebilirim.',listening:'Dinliyorum…',tapMic:'Mikrofona dokunun ve konuşun',liveNote:'Canlı avatar kioskta çalışır',back:'Geri',idleQ:'Hâlâ burada mısınız?',idleBtn:'Evet, devam',loading:'Daleel hazırlanıyor…',prayers:['Sabah','Öğle','İkindi','Akşam','Yatsı'],openLive:'Canlı avatarla konuşun',moreLangs:'Diğer diller',allLangs:'Tüm diller',chatNow:'Konuşmak için dokunun'},
+bn:{help:'আজ আমি কীভাবে সাহায্য করতে পারি?',dir:'ltr',nm:'দলিল',loc:'মিনা · গেট 12',hijri:'8 জিলহজ 1448',welcome:'দয়াময়ের মেহমানগণ, স্বাগতম',welcomeSub:'তাঁবু, সেবা ও সাহায্যের জন্য আপনার গাইড, আপনার ভাষায়।',scan:'আপনার নুসুক কার্ড স্ক্যান করুন',scanHint:'স্ক্রিনের নিচের স্ক্যানারে QR কোডটি ধরুন',scannerBelow:'স্ক্যানার নিচে',tapDemo:'ডেমো: স্ক্যান উইন্ডোতে ট্যাপ করুন',verified:'পরিচয় যাচাই হয়েছে',nat:'জাতীয়তা',natVal:'মিশর',camp:'তাঁবু',campVal:'মিনা · 42B',provider:'সেবাদাতা',providerVal:'আল সাদা হজ কোম্পানি',pilgrim:'মোহাম্মদ আবদুল্লাহ',hajjYear:'হজ 1448',chooseLang:'আপনার ভাষা বেছে নিন',cont:'চালিয়ে যান',greet:'আসসালামু আলাইকুম,',hajjDays:'হজের দিন · জিলহজ',dayNow:'তারবিয়ার দিন · মিনায় রাত্রিযাপন',nextPrayer:'পরবর্তী নামাজ',inTime:'{h} ঘ {m} মি পরে',heat:'তাপ সতর্কতা',heatTip:'পানি পান করুন, ছায়ায় থাকুন',wf:'পথনির্দেশ',wfSub:'আপনার তাঁবু ও কাছের সেবা',ai:'দলিল · এআই গাইড',aiSub:'আপনার ভাষায় কণ্ঠে জিজ্ঞাসা করুন',em:'জরুরি ও সাহায্য',emSub:'তাৎক্ষণিক SOS ও সরাসরি লাইন',endSession:'শেষ',emTitle:'জরুরি ও সাহায্য',sosHold:'3 সেকেন্ড চেপে ধরে রাখুন',sosHolding:'ধরে রাখুন…',sosSentT:'সাহায্য আসছে',sosSentS:'আপনার অবস্থান উদ্ধারকারী দলকে পাঠানো হয়েছে',sosEta:'আনুমানিক পৌঁছানো: প্রায় 4 মিনিট',cancelAlert:'সতর্কতা বাতিল',contacts:'সরাসরি লাইন',c911:'সমন্বিত জরুরি সেবা',c997:'রেড ক্রিসেন্ট',cProv:'আপনার হজ এজেন্সি',cNusuk:'নুসুক কেয়ার',cNusukS:'24 ঘণ্টা সেবা',connecting:'সংযোগ হচ্ছে',endCall:'কল শেষ',wfTitle:'পথনির্দেশ',wfQ:'আপনি কোথায় যেতে চান?',oCamp:'আমার তাঁবু',oHosp:'নিকটতম হাসপাতাল',oPolice:'নিকটতম থানা',oNusuk:'নুসুক কেয়ার কেন্দ্র',nearest:'নিকটতম',walk:'হেঁটে {m} মিনিট',mu:'মি',min:'মিনিট',low:'কম',med:'মাঝারি',high:'ভিড়',nearby:'কাছে {n}টি',select:'বেছে নিন',selected:'নির্বাচিত',sendPhone:'ফোনে পাঠান',scanPhone:'ফোনে পথটি খুলতে স্ক্যান করুন',close:'বন্ধ',youHere:'আপনি এখানে',jamarat:'জামারাত',khaif:'মসজিদে খাইফ',metro:'মাশায়ের ট্রেন',aiHello:'আমি দলিল, আপনার হজ গাইড',aiSub2:'কণ্ঠে যেকোনো প্রশ্ন করুন',tryAsk:'জিজ্ঞাসা করে দেখুন',q1:'আমার তাঁবু কোথায়?',a1:'আপনার 42B তাঁবু 400 মিটার সামনে। মানচিত্রের সোনালি পথ ধরে হাঁটুন, প্রায় 6 মিনিট।',q2:'আজকের আমল কী?',a2:'আজ তারবিয়ার দিন। হাজিরা মিনায় অবস্থান করেন এবং প্রতিটি নামাজ সময়মতো কসর করে আদায় করেন।',q3:'গরমে অসুস্থ লাগছে',a3:'এখনই ছায়ায় যান এবং পানি পান করুন। আমি রেড ক্রিসেন্টে (997) কল করতে পারি বা 850 মিটার দূরের নিকটতম ক্লিনিকে নিয়ে যেতে পারি।',listening:'শুনছি…',tapMic:'মাইকে ট্যাপ করে কথা বলুন',liveNote:'লাইভ অবতার কিয়স্কে চলে',back:'ফিরে যান',idleQ:'আপনি কি এখনও আছেন?',idleBtn:'হ্যাঁ, চালিয়ে যান',loading:'দলিল প্রস্তুত হচ্ছে…',prayers:['ফজর','যোহর','আসর','মাগরিব','এশা'],openLive:'লাইভ অবতারের সাথে কথা বলুন',moreLangs:'আরও ভাষা',allLangs:'সব ভাষা',chatNow:'কথা বলতে ট্যাপ করুন'},
+ms:{help:'Apa yang boleh saya bantu hari ini?',dir:'ltr',nm:'Daleel',loc:'Mina · Pintu 12',hijri:'8 Zulhijjah 1448',welcome:'Selamat datang, tetamu Allah Yang Maha Pemurah',welcomeSub:'Panduan anda ke khemah, perkhidmatan dan bantuan, dalam bahasa anda.',scan:'Imbas kad Nusuk anda',scanHint:'Halakan kod QR ke pengimbas di bawah skrin',scannerBelow:'Pengimbas di bawah',tapDemo:'Demo: sentuh tetingkap imbasan',verified:'Identiti disahkan',nat:'Warganegara',natVal:'Mesir',camp:'Khemah',campVal:'Mina · 42B',provider:'Penyedia perkhidmatan',providerVal:'Al Saada Hajj Company',pilgrim:'Mohammad Abdullah',hajjYear:'Haji 1448',chooseLang:'Pilih bahasa anda',cont:'Teruskan',greet:'Assalamualaikum,',hajjDays:'Hari haji · Zulhijjah',dayNow:'Hari Tarwiyah · bermalam di Mina',nextPrayer:'Solat seterusnya',inTime:'lagi {h} j {m} min',heat:'Amaran panas',heatTip:'Minum air, kekal di tempat teduh',wf:'Panduan arah',wfSub:'Khemah anda dan kemudahan berhampiran',ai:'Daleel · pemandu AI',aiSub:'Tanya dengan suara, dalam bahasa anda',em:'Kecemasan & bantuan',emSub:'SOS segera dan talian terus',endSession:'Tamat',emTitle:'Kecemasan & bantuan',sosHold:'Tekan dan tahan 3 saat',sosHolding:'Terus tahan…',sosSentT:'Bantuan sedang dalam perjalanan',sosSentS:'Lokasi anda telah dihantar kepada pasukan bantuan',sosEta:'Anggaran tiba: kira-kira 4 minit',cancelAlert:'Batalkan amaran',contacts:'Talian terus',c911:'Kecemasan bersepadu',c997:'Bulan Sabit Merah',cProv:'Penganjur haji anda',cNusuk:'Nusuk Care',cNusukS:'Sedia 24 jam',connecting:'Menyambung ke',endCall:'Tamatkan panggilan',wfTitle:'Panduan arah',wfQ:'Ke mana anda mahu pergi?',oCamp:'Khemah saya',oHosp:'Hospital terdekat',oPolice:'Balai polis terdekat',oNusuk:'Pusat Nusuk Care',nearest:'Terdekat',walk:'{m} min berjalan',mu:'m',min:'min',low:'Lengang',med:'Sederhana',high:'Sesak',nearby:'{n} berhampiran',select:'Pilih',selected:'Dipilih',sendPhone:'Hantar ke telefon',scanPhone:'Imbas untuk membuka laluan di telefon anda',close:'Tutup',youHere:'Anda di sini',jamarat:'Jamrah',khaif:'Masjid Al-Khaif',metro:'Kereta api Masyair',aiHello:'Saya Daleel, pemandu haji anda',aiSub2:'Tanya apa sahaja dengan suara',tryAsk:'Cuba tanya',q1:'Di mana khemah saya?',a1:'Khemah 42B anda 400 m di hadapan. Ikut laluan emas di peta, kira-kira 6 minit berjalan kaki.',q2:'Apakah amalan hari ini?',a2:'Hari ini Hari Tarwiyah. Jemaah bermalam di Mina dan solat pada waktunya, dengan mengqasarkan solat empat rakaat.',q3:'Saya tidak sihat kerana panas',a3:'Segera ke tempat teduh dan minum air. Saya boleh menghubungi Bulan Sabit Merah (997) atau membawa anda ke klinik terdekat, 850 m dari sini.',listening:'Sedang mendengar…',tapMic:'Sentuh mikrofon dan bercakap',liveNote:'Avatar langsung berjalan di kiosk',back:'Kembali',idleQ:'Anda masih di sini?',idleBtn:'Ya, teruskan',loading:'Menyediakan Daleel…',prayers:['Subuh','Zohor','Asar','Maghrib','Isyak'],openLive:'Bercakap dengan avatar langsung',moreLangs:'Bahasa lain',allLangs:'Semua bahasa',chatNow:'Sentuh untuk bercakap'},
+ru:{help:'Чем я могу помочь сегодня?',dir:'ltr',nm:'Далил',loc:'Мина · Ворота 12',hijri:'8 зу-ль-хиджа 1448',welcome:'Добро пожаловать, гости Милостивого',welcomeSub:'Ваш гид по лагерям, услугам и помощи на вашем языке.',scan:'Отсканируйте карту Nusuk',scanHint:'Поднесите QR-код к сканеру под экраном',scannerBelow:'Сканер внизу',tapDemo:'Демо: коснитесь окна сканирования',verified:'Личность подтверждена',nat:'Гражданство',natVal:'Египет',camp:'Лагерь',campVal:'Мина · 42B',provider:'Организатор',providerVal:'Al Saada Hajj Company',pilgrim:'Мухаммад Абдулла',hajjYear:'Хадж 1448',chooseLang:'Выберите язык',cont:'Продолжить',greet:'Ассаляму алейкум,',hajjDays:'Дни хаджа · зу-ль-хиджа',dayNow:'День Тарвия · ночь в Мине',nextPrayer:'Следующий намаз',inTime:'через {h} ч {m} мин',heat:'Сильная жара',heatTip:'Пейте воду, оставайтесь в тени',wf:'Навигация',wfSub:'Ваш лагерь и ближайшие службы',ai:'Далил · ИИ-гид',aiSub:'Спрашивайте голосом на своём языке',em:'Экстренная помощь',emSub:'Мгновенный SOS и прямые линии',endSession:'Выход',emTitle:'Экстренная помощь',sosHold:'Нажмите и держите 3 секунды',sosHolding:'Продолжайте держать…',sosSentT:'Помощь уже в пути',sosSentS:'Ваше местоположение передано спасателям',sosEta:'Прибытие примерно через 4 мин',cancelAlert:'Отменить вызов',contacts:'Прямые линии',c911:'Единая служба спасения',c997:'Красный Полумесяц',cProv:'Ваш хадж-оператор',cNusuk:'Nusuk Care',cNusukS:'Круглосуточно',connecting:'Соединение с',endCall:'Завершить',wfTitle:'Навигация',wfQ:'Куда вы хотите пойти?',oCamp:'Мой лагерь',oHosp:'Ближайшая больница',oPolice:'Ближайший пост полиции',oNusuk:'Центр Nusuk Care',nearest:'Ближайший',walk:'{m} мин пешком',mu:'м',min:'мин',low:'Свободно',med:'Средне',high:'Людно',nearby:'Рядом: {n}',select:'Выбрать',selected:'Выбрано',sendPhone:'На телефон',scanPhone:'Отсканируйте, чтобы открыть маршрут на телефоне',close:'Закрыть',youHere:'Вы здесь',jamarat:'Джамарат',khaif:'Мечеть аль-Хайф',metro:'Поезд Машаир',aiHello:'Я Далил, ваш гид по хаджу',aiSub2:'Задайте любой вопрос голосом',tryAsk:'Попробуйте спросить',q1:'Где мой лагерь?',a1:'Ваш лагерь 42B в 400 м впереди. Следуйте золотому маршруту на карте, около 6 минут пешком.',q2:'Какие обряды сегодня?',a2:'Сегодня день Тарвия. Паломники остаются в Мине и совершают каждый намаз в своё время, сокращая четырёхракаатные.',q3:'Мне плохо от жары',a3:'Сразу перейдите в тень и выпейте воды. Я могу вызвать Красный Полумесяц (997) или проводить вас в ближайшую клинику в 850 м.',listening:'Слушаю…',tapMic:'Коснитесь микрофона и говорите',liveNote:'Живой аватар работает на киоске',back:'Назад',idleQ:'Вы ещё здесь?',idleBtn:'Да, продолжить',loading:'Готовим Далила…',prayers:['Фаджр','Зухр','Аср','Магриб','Иша'],openLive:'Поговорить с живым аватаром',moreLangs:'Другие языки',allLangs:'Все языки',chatNow:'Коснитесь, чтобы говорить'},
+sw:{help:'Nikusaidie nini leo?',dir:'ltr',nm:'Daleel',loc:'Mina · Lango 12',hijri:'8 Dhul Hijja 1448',welcome:'Karibuni, wageni wa Mwingi wa Rehema',welcomeSub:'Mwongozo wako wa mahema, huduma na msaada, kwa lugha yako.',scan:'Changanua kadi yako ya Nusuk',scanHint:'Weka msimbo wa QR mbele ya skana chini ya skrini',scannerBelow:'Skana iko chini',tapDemo:'Onyesho: gusa dirisha la kuchanganua',verified:'Utambulisho umethibitishwa',nat:'Uraia',natVal:'Misri',camp:'Hema',campVal:'Mina · 42B',provider:'Mtoa huduma',providerVal:'Al Saada Hajj Company',pilgrim:'Mohammad Abdullah',hajjYear:'Hija 1448',chooseLang:'Chagua lugha yako',cont:'Endelea',greet:'Assalamu alaikum,',hajjDays:'Siku za Hija · Dhul Hijja',dayNow:'Siku ya Tarwiya · kulala Mina',nextPrayer:'Swala inayofuata',inTime:'baada ya saa {h} dk {m}',heat:'Tahadhari ya joto',heatTip:'Kunywa maji, kaa kivulini',wf:'Maelekezo',wfSub:'Hema lako na huduma za karibu',ai:'Daleel · mwongozo wa AI',aiSub:'Uliza kwa sauti, kwa lugha yako',em:'Dharura na msaada',emSub:'SOS ya papo hapo na simu za moja kwa moja',endSession:'Maliza',emTitle:'Dharura na msaada',sosHold:'Bonyeza na ushikilie sekunde 3',sosHolding:'Endelea kushikilia…',sosSentT:'Msaada unakuja',sosSentS:'Mahali ulipo pametumwa kwa timu ya uokoaji',sosEta:'Muda wa kufika: takriban dakika 4',cancelAlert:'Ghairi tahadhari',contacts:'Simu za moja kwa moja',c911:'Dharura ya pamoja',c997:'Hilali Nyekundu',cProv:'Kampuni yako ya Hija',cNusuk:'Nusuk Care',cNusukS:'Saa 24',connecting:'Inaunganisha na',endCall:'Kata simu',wfTitle:'Maelekezo',wfQ:'Ungependa kwenda wapi?',oCamp:'Hema langu',oHosp:'Hospitali iliyo karibu',oPolice:'Kituo cha polisi kilicho karibu',oNusuk:'Kituo cha Nusuk Care',nearest:'Karibu zaidi',walk:'Dakika {m} kwa miguu',mu:'m',min:'dk',low:'Tulivu',med:'Wastani',high:'Msongamano',nearby:'{n} karibu',select:'Chagua',selected:'Imechaguliwa',sendPhone:'Tuma kwa simu',scanPhone:'Changanua ili kufungua njia kwenye simu yako',close:'Funga',youHere:'Uko hapa',jamarat:'Jamarat',khaif:'Msikiti wa Al-Khaif',metro:'Treni ya Mashaer',aiHello:'Mimi ni Daleel, mwongozo wako wa Hija',aiSub2:'Niulize chochote kwa sauti',tryAsk:'Jaribu kuuliza',q1:'Hema langu liko wapi?',a1:'Hema lako 42B liko mita 400 mbele. Fuata njia ya dhahabu kwenye ramani, takriban dakika 6 kwa miguu.',q2:'Ibada za leo ni zipi?',a2:'Leo ni Siku ya Tarwiya. Mahujaji hukaa Mina na kuswali kila swala kwa wakati wake, wakifupisha swala za rakaa nne.',q3:'Joto limenifanya nijisikie vibaya',a3:'Nenda kivulini sasa na unywe maji. Ninaweza kupiga simu Hilali Nyekundu (997) au kukuelekeza kliniki iliyo karibu, mita 850.',listening:'Ninasikiliza…',tapMic:'Gusa maikrofoni na uzungumze',liveNote:'Avatar hai inafanya kazi kwenye kioski',back:'Rudi',idleQ:'Bado uko hapa?',idleBtn:'Ndiyo, endelea',loading:'Daleel anaandaliwa…',prayers:['Alfajiri','Adhuhuri','Alasiri','Magharibi','Isha'],openLive:'Ongea na avatar hai',moreLangs:'Lugha zaidi',allLangs:'Lugha zote',chatNow:'Gusa kuzungumza'}
+};
+// Any key a language lacks falls back to English, so new languages can be added a few strings at a time.
+Object.keys(T).forEach(k => { if (k !== 'en') T[k] = Object.assign({}, T.en, T[k]); });
+const ARABIC_SCRIPT = c => c === 'ar' || c === 'ur' || c === 'fa';
+
+/* Demo destinations (map space 540×826; "you" at 270,470) */
+const MAP = {
+  camp:    [{en:'Camp 42B (yours)',ar:'مخيمك 42B',d:400,min:6,c:0,x:392,y:300},{en:'Camp 44A',ar:'مخيم 44A',d:650,min:9,c:1,x:120,y:262},{en:'Camp 39C',ar:'مخيم 39C',d:900,min:13,c:2,x:318,y:150}],
+  hospital:[{en:'Mina Al-Wadi Hospital',ar:'مستشفى منى الوادي',d:850,min:12,c:1,x:140,y:206},{en:'Emergency Center 2',ar:'مركز إسعاف 2',d:1100,min:15,c:0,x:420,y:182},{en:'Health Center 7',ar:'مركز صحي 7',d:1400,min:19,c:0,x:250,y:118}],
+  police:  [{en:'Security Point A',ar:'نقطة أمن A',d:200,min:3,c:1,x:384,y:398},{en:'Police Center B',ar:'مركز شرطة B',d:500,min:7,c:0,x:146,y:372},{en:'Security Point C',ar:'نقطة أمن C',d:720,min:10,c:2,x:430,y:250}],
+  nusuk:   [{en:'Nusuk Care 1',ar:'نسك عناية 1',d:300,min:4,c:0,x:170,y:410},{en:'Nusuk Care 2',ar:'نسك عناية 2',d:600,min:8,c:1,x:404,y:332},{en:'Nusuk Care 3',ar:'نسك عناية 3',d:950,min:13,c:0,x:226,y:196}],
+};
+const MODE_ICON = { camp:'tent', hospital:'crescent', police:'shield', nusuk:'care' };
+const PRAYER_TIMES = [[4,12],[12,19],[15,37],[18,58],[20,28]]; // demo: Mina, Hajj season
+
+/* ═════════ STATE ═════════ */
+const S = { screen:'attract', lang:'ar', locked:false, rot:0, scan:'idle', mode:'camp', sel:0, sheet:true, qr:false, call:null, sos:false, langSheet:false, orient:'auto', theme:START_THEME };
+const $app = document.getElementById('app');
+const $view = document.createElement('div'); $view.className = 'k-view'; $app.appendChild($view);
+const isLand = () => $app.classList.contains('land');
+const tt = () => T[S.lang];
+const fmt = (s, o) => s.replace(/\{(\w+)\}/g, (_, k) => o[k]);
+const timers = new Set();
+const later = (fn, ms) => { const id = setTimeout(() => { timers.delete(id); fn(); }, ms); timers.add(id); return id; };
+const every = (fn, ms) => { const id = setInterval(fn, ms); timers.add(id); return id; };
+const clearTimers = () => { timers.forEach(id => { clearTimeout(id); clearInterval(id); }); timers.clear(); };
+const pad = n => String(n).padStart(2, '0');
+const clock = () => { const d = new Date(); return pad(d.getHours()) + ':' + pad(d.getMinutes()); };
+const shownLang = () => (S.screen === 'attract' && !S.locked) ? LANGS[S.rot].code : S.lang;
+
+/* ═════════ ICONS & ORNAMENT ═════════ */
+const I = {
+  pin:'<path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+  tent:'<path d="M3 20L12 4l9 16z"/><path d="M9.5 20c0-4 1-7 2.5-9 1.5 2 2.5 5 2.5 9"/>',
+  crescent:'<path d="M15 3.6a8.5 8.5 0 1 0 5.4 11.6A7 7 0 0 1 15 3.6z"/>',
+  shield:'<path d="M12 3l8 3v6c0 5-3.4 8.3-8 9-4.6-.7-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+  care:'<path d="M12 20s-7-4.4-7-9.6A4 4 0 0 1 12 8a4 4 0 0 1 7 2.4C19 15.6 12 20 12 20z"/><path d="M12 11v4M10 13h4"/>',
+  phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
+  mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
+  back:'<path d="M15 5l-7 7 7 7"/>', chev:'<path d="M9 5l7 7-7 7"/>', down:'<path d="M6 9l6 6 6-6"/>',
+  check:'<path d="M5 12.5l4.5 4.5L19 7"/>', close:'<path d="M6 6l12 12M18 6L6 18"/>',
+  globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/>',
+  thermo:'<path d="M14 14.8V5a2 2 0 0 0-4 0v9.8a4 4 0 1 0 4 0z"/><path d="M12 10v6"/>',
+  dome:'<path d="M4 20h16M6 20v-6a6 6 0 0 1 12 0v6"/><path d="M12 5v3M12 3v.01"/>',
+  qr:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM18 18h3v3h-3zM14 20h1M20 14h1"/>',
+  walk:'<circle cx="13" cy="4.5" r="1.8"/><path d="M10 21l2-6 3 3v3M8 12l3-4 3 2 3 1M12 15l-1-5"/>',
+  hand:'<path d="M9 11V5a1.5 1.5 0 0 1 3 0v6M12 10V8.5a1.5 1.5 0 0 1 3 0V11M15 10.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-1a6 6 0 0 1-5-2.7L4 15.5a1.5 1.5 0 0 1 2.5-1.7L9 16"/>',
+  exit:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
+};
+const ic = (n, s = 24, w = 1.9, cls = '') => `<svg class="${cls}" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[n]}</svg>`;
+function starPts(cx, cy, R, r = R * 0.765) {
+  const p = [];
+  for (let i = 0; i < 16; i++) { const a = Math.PI / 8 * i - Math.PI / 2, rad = i % 2 ? r : R; p.push((cx + rad * Math.cos(a)).toFixed(1) + ',' + (cy + rad * Math.sin(a)).toFixed(1)); }
+  return p.join(' ');
+}
+const emblem = s => `<svg width="${s}" height="${s}" viewBox="0 0 100 100" aria-hidden="true"><polygon points="${starPts(50,50,46)}" fill="none" stroke="currentColor" stroke-width="3.5"/><polygon points="${starPts(50,50,28)}" fill="currentColor" opacity=".9"/></svg>`;
+const PAT = () => `<svg class="k-pat" aria-hidden="true"><defs><pattern id="kp" width="84" height="84" patternUnits="userSpaceOnUse">
+  <polygon points="${starPts(42,42,22)}" fill="none" stroke="rgba(217,180,106,.13)" stroke-width="1"/>
+  ${[[0,0],[84,0],[0,84],[84,84]].map(([x,y]) => `<polygon points="${starPts(x,y,10)}" fill="none" stroke="rgba(217,180,106,.10)" stroke-width="1"/>`).join('')}
+  </pattern></defs><rect width="100%" height="100%" fill="url(#kp)"/></svg>`;
+document.getElementById('markStar').setAttribute('points', starPts(50, 50, 44));
+const poster = () => CONFIG.avatarPoster ? `<img src="${CONFIG.avatarPoster}" alt="" onerror="this.remove()">` : '';
+
+const photo = () => CONFIG.pilgrimPhoto
+  ? `<img src="${CONFIG.pilgrimPhoto}" alt="">`
+  : `<svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" fill="#1E7A66"/><circle cx="50" cy="40" r="16" fill="#C99A70"/><path d="M34 44c2 12 8 18 16 18s14-6 16-18c-3 6-9 9-16 9s-13-3-16-9z" fill="#3A2A1E"/><path d="M14 100c2-22 17-34 36-34s34 12 36 34z" fill="#FBF8F1"/><path d="M64 68c8 3 15 10 18 20l-10 2c-2-8-5-14-8-22z" fill="#C99A70"/><path d="M30 76l44 24" stroke="#E4DCCB" stroke-width="3"/></svg>`;
+
+function fakeQR(size = 25, px = 220) {
+  const c = px / size; let seed = 7, out = '';
+  const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+  const finder = (x, y) => { for (let i = 0; i < 7; i++) for (let j = 0; j < 7; j++) { const on = i === 0 || i === 6 || j === 0 || j === 6 || (i > 1 && i < 5 && j > 1 && j < 5); if (on) out += `<rect x="${(x+i)*c}" y="${(y+j)*c}" width="${c}" height="${c}"/>`; } };
+  const inF = (i, j) => (i < 8 && j < 8) || (i > size - 9 && j < 8) || (i < 8 && j > size - 9);
+  for (let i = 0; i < size; i++) for (let j = 0; j < size; j++) if (!inF(i, j) && rnd() > 0.52) out += `<rect x="${i*c}" y="${j*c}" width="${c}" height="${c}"/>`;
+  finder(0, 0); finder(size - 7, 0); finder(0, size - 7);
+  const m = px / 2;
+  return `<svg width="${px}" height="${px}" viewBox="0 0 ${px} ${px}" fill="#071A17" aria-hidden="true">${out}<rect x="${m-22}" y="${m-22}" width="44" height="44" rx="10" fill="#fff"/><polygon points="${starPts(m,m,17)}" fill="#D9B46A"/></svg>`;
+}
+
+/* ═════════ SHARED PIECES ═════════ */
+const sb = () => { const t = tt(); return `<div class="k-sb" dir="${t.dir}"><div class="l">${ic('pin',16)}<span>${t.loc}</span></div><div class="c">${t.hijri}</div><div class="r"><span class="t" data-clock>${clock()}</span><span class="sep"></span>${ic('thermo',16)}<span>41°</span></div></div>`; };
+const head = (title, dark) => `<div class="k-head k-in"><button class="k-back ${dark ? 'dark' : ''}" data-act="back" aria-label="${tt().back}">${ic('back',24,2.2,'flip')}</button><h1>${title}</h1></div>`;
+const itemName = it => ARABIC_SCRIPT(S.lang) ? it.ar : it.en;
+const crowd = c => { const t = tt(); return `<span class="k-crowd c${c}">${[t.low, t.med, t.high][c]}</span>`; };
+function nextPrayer() {
+  const t = tt(), d = new Date(), now = d.getHours() * 60 + d.getMinutes();
+  let i = PRAYER_TIMES.findIndex(([h, m]) => h * 60 + m > now), diff;
+  if (i === -1) { i = 0; diff = 24 * 60 - now + PRAYER_TIMES[0][0] * 60 + PRAYER_TIMES[0][1]; }
+  else diff = PRAYER_TIMES[i][0] * 60 + PRAYER_TIMES[i][1] - now;
+  return { name: t.prayers[i], time: pad(PRAYER_TIMES[i][0]) + ':' + pad(PRAYER_TIMES[i][1]), in: fmt(t.inTime, { h: Math.floor(diff / 60), m: diff % 60 }) };
+}
+function langSheet() {
+  if (!S.langSheet) return '';
+  const t = tt(), cur = shownLang();
+  return `<div class="k-lsheet-scrim" data-act="closeLangs"></div><div class="k-lsheet" dir="${t.dir}">
+    <div class="k-lsheet-h"><b>${t.allLangs}</b><button data-act="closeLangs" aria-label="${t.close}">${ic('close',20,2.2)}</button></div>
+    <div class="k-lsheet-grid">${LANGS.map(l => `<button class="k-lopt ${l.code === cur ? 'on' : ''}" data-act="pickLang" data-v="${l.code}"><b lang="${l.code}">${l.label}</b><small>${l.en}</small></button>`).join('')}</div></div>`;
+}
+
+/* ═════════ SCREENS ═════════ */
+function vAttractKH() {
+  const L = LANGS.find(l => l.code === shownLang()), r = T[L.code];
+  const win = S.scan === 'ok'
+    ? `<div class="k-ok"><div class="ring">${ic('check',46,2.8)}</div><div class="k-dots" style="color:var(--k-gold-2)"><i></i><i></i><i></i></div></div>`
+    : `<div class="qrg">${ic('qr',108,1.2)}</div><i class="k-cn a"></i><i class="k-cn b"></i><i class="k-cn c"></i><i class="k-cn d"></i><i class="k-laser"></i>`;
+  return `<div class="k-screen k-dark k-s-attract">${PAT()}${sb()}
+  <div class="k-att">
+    <div class="k-brand k-in">${emblem(48)}<div><div class="k-word">دليل</div><div class="k-word-l">DALEEL · HAJJ GUIDE</div></div></div>
+    <div class="k-rot k-in" id="kRot" dir="${r.dir}" lang="${L.code}"><h1 data-k="welcome">${r.welcome}</h1><p data-k="welcomeSub">${r.welcomeSub}</p></div>
+    <button class="k-portal k-in" data-act="scan" aria-label="${r.scan}">
+      <svg class="k-rings" viewBox="0 0 296 296"><polygon class="r1" points="${starPts(148,148,144)}"/><polygon class="r2" points="${starPts(148,148,126)}"/><circle class="r3" cx="148" cy="148" r="104"/></svg>
+      <div class="k-win">${win}</div>
+    </button>
+    <div class="k-rot k-scantext k-in" id="kRot2" dir="${r.dir}" lang="${L.code}"><h2 data-k="scan">${r.scan}</h2><p data-k="scanHint">${r.scanHint}</p>${KIOSK ? '' : `<span class="k-demo">${ic('hand',14)}<span data-k="tapDemo">${r.tapDemo}</span></span>`}</div>
+    <div class="k-below" id="kRot3" lang="${L.code}"><span data-k="scannerBelow">${r.scannerBelow}</span>${ic('down',22,2,'k-chev')}${ic('down',22,2,'k-chev')}</div>
+  </div>
+  <div class="k-langs">${PRIMARY.map(l => `<button class="k-lp ${l.code === L.code ? 'on' : ''}" data-act="pickLang" data-v="${l.code}" lang="${l.code}">${l.label}</button>`).join('')}<button class="k-lp more ${L.more ? 'on' : ''}" data-act="langs" aria-label="${r.moreLangs}">${ic('globe',16)}<span>+${LANGS.length - PRIMARY.length}</span></button></div>
+  ${langSheet()}</div>`;
+}
+
+function vVerify() {
+  const t = tt(), cur = LANGS.find(l => l.code === S.lang);
+  return `<div class="k-screen k-light k-s-verify" dir="${t.dir}">${sb()}<div class="k-pad">
+    <div class="k-okb k-in"><i>${ic('check',16,3)}</i><span>${t.verified}</span></div>
+    <div class="k-id k-in">
+      <svg class="k-id-wm" viewBox="0 0 200 200" aria-hidden="true"><polygon points="${starPts(100,100,96)}" fill="none" stroke="currentColor" stroke-width="2"/><polygon points="${starPts(100,100,64)}" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+      <div class="k-id-top"><span>NUSUK · ${t.hajjYear}</span><span class="k-chip">${ic('check',12,3)} ID</span></div>
+      <div class="k-id-mid"><div class="k-photo">${photo()}</div><div class="minw0"><div class="k-id-name">${t.pilgrim}</div><div class="k-id-num">NSK-2027-00847213</div></div></div>
+      <div class="k-id-grid"><div><small>${t.nat}</small><b>${t.natVal}</b></div><div><small>${t.camp}</small><b>${t.campVal}</b></div><div><small>${t.provider}</small><b>${t.providerVal}</b></div></div>
+    </div>
+    <div class="k-sec-h k-in">${ic('globe',20)}<span>${t.chooseLang}</span></div>
+    <div class="k-lgrid k-in">${PRIMARY.map(l => `<button class="k-lt ${l.code === S.lang ? 'on' : ''}" data-act="pickLang" data-v="${l.code}"><b lang="${l.code}">${l.label}</b><small>${l.short}</small>${l.code === S.lang ? `<i>${ic('check',13,3.2)}</i>` : ''}</button>`).join('')}</div>
+    <button class="k-more k-in ${cur.more ? 'on' : ''}" data-act="langs">${ic('globe',20)}<span lang="${cur.more ? cur.code : S.lang}">${cur.more ? cur.label : t.moreLangs}</span><small>+${LANGS.length - PRIMARY.length}</small></button>
+    <button class="k-cta k-in" data-act="go" data-v="hub"><span>${t.cont}</span>${ic('chev',24,2.4,'flip')}</button>
+  </div>${langSheet()}</div>`;
+}
+
+function vHubKH() {
+  const t = tt(), np = nextPrayer();
+  const wfArt = `<svg class="art" viewBox="0 0 220 150" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><path d="M30 130 C 60 90, 90 110, 120 70 S 180 40, 196 26" fill="none" stroke="rgba(232,201,135,.85)" stroke-width="3" stroke-dasharray="2 9" stroke-linecap="round"/><circle cx="30" cy="130" r="7" fill="#5CC8FF" stroke="#fff" stroke-width="2"/><path d="M196 34c-7-8-9-12-9-16a9 9 0 0 1 18 0c0 4-2 8-9 16z" fill="#E8C987"/><circle cx="196" cy="18" r="3.5" fill="#0E3B33"/></svg>`;
+  return `<div class="k-screen k-light k-s-hub" dir="${t.dir}">${sb()}<div class="k-pad">
+    <div class="k-hub-top k-in"><div class="minw0"><small>${t.greet}</small><h1>${t.pilgrim}</h1></div><button class="k-pill" data-act="go" data-v="attract">${ic('exit',18,1.9,'flip')}<span>${t.endSession}</span></button></div>
+    <div class="k-track k-in"><div class="k-track-h"><small>${t.hajjDays}</small><b>${t.dayNow}</b></div><div class="k-days">${[8,9,10,11,12,13].map(d => `<span class="${d === 8 ? 'on' : ''}">${d}</span>`).join('')}</div></div>
+    <div class="k-info k-in">
+      <div class="k-prayer">${ic('dome',22)}<small>${t.nextPrayer}</small><div class="k-pr-row"><b data-pr="name">${np.name}</b><span data-pr="time">${np.time}</span></div><em data-pr="in">${np.in}</em></div>
+      <div class="k-heat">${ic('thermo',22)}<small>${t.heat}</small><b>41°C</b><em>${t.heatTip}</em></div>
+    </div>
+    <div class="k-tiles k-in">
+      <button class="k-tile k-tile-wf" data-act="go" data-v="wayfinding">${wfArt}<div class="k-tile-txt"><b>${t.wf}</b><span>${t.wfSub}</span></div></button>
+      <button class="k-tile k-tile-ai" data-act="go" data-v="ai"><div class="k-ava-media"><div class="k-mini-orb"></div>${poster()}<span class="k-talk">${ic('mic',14,2.2)}${t.chatNow}</span></div><div class="k-tile-txt"><b>${t.ai}</b><span>${t.aiSub}</span></div></button>
+    </div>
+    <button class="k-sosbar k-in" data-act="go" data-v="emergency"><span class="k-sosb">SOS</span><div class="minw0"><b>${t.em}</b><span>${t.emSub}</span></div>${ic('chev',24,2.2,'flip')}</button>
+  </div></div>`;
+}
+
+const CALLS = { '911':{ num:'911', name:t => t.c911 }, '997':{ num:'997', name:t => t.c997 }, prov:{ num:t => t.campVal, name:t => t.providerVal }, nusuk:{ num:t => t.cNusukS, name:t => t.cNusuk } };
+function vEmergency() {
+  const t = tt();
+  const C = [{k:'911',title:'911',sub:t.c911,i:'phone',red:1},{k:'997',title:'997',sub:t.c997,i:'crescent',red:1},{k:'prov',title:t.cProv,sub:t.providerVal,i:'tent'},{k:'nusuk',title:t.cNusuk,sub:t.cNusukS,i:'care'}];
+  let overlay = '';
+  if (S.call) { const c = CALLS[S.call], num = typeof c.num === 'function' ? c.num(t) : c.num;
+    overlay = `<div class="k-scrim" data-act="endCall"></div><div class="k-call"><div class="k-call-ic">${ic('phone',36,2)}</div><small>${t.connecting}</small><b>${c.name(t)}</b><span class="num">${num}</span><div class="k-dots"><i></i><i></i><i></i></div><button class="k-endcall" data-act="endCall">${t.endCall}</button></div>`; }
+  if (S.sos) overlay = `<div class="k-sos-on"><div class="k-pulse"><i></i><i></i><i></i><div class="k-pulse-core">${ic('check',52,2.8)}</div></div><h2>${t.sosSentT}</h2><p>${t.sosSentS}</p><div class="k-loc">${ic('pin',22)}<div><b>${t.loc}</b><span>Kiosk K-12 · ${clock()}</span></div></div><div class="k-eta">${t.sosEta}</div><button class="k-cancel" data-act="cancelSos">${t.cancelAlert}</button></div>`;
+  return `<div class="k-screen k-light k-em k-s-em" dir="${t.dir}">${sb()}<div class="k-pad">
+    ${head(t.emTitle)}
+    <div class="k-sos-wrap k-in"><svg class="k-sos-ring" viewBox="0 0 300 300" aria-hidden="true"><circle class="bg" cx="150" cy="150" r="140"/><circle class="fg" id="kRing" cx="150" cy="150" r="140" style="stroke-dasharray:879.6;stroke-dashoffset:879.6"/></svg><button class="k-sos" id="kSos"><b>SOS</b><span id="kSosTxt">${t.sosHold}</span></button></div>
+    <div class="k-sec-h small k-in">${t.contacts}</div>
+    <div class="k-contacts k-in">${C.map(c => `<button class="k-ct ${c.red ? 'red' : ''}" data-act="call" data-v="${c.k}"><i>${ic(c.i,22)}</i><div class="minw0"><b>${c.title}</b><span>${c.sub}</span></div></button>`).join('')}</div>
+  </div>${overlay}</div>`;
+}
+
+function vWayfinding() {
+  const t = tt();
+  const rows = [['camp', t.oCamp], ['hospital', t.oHosp], ['police', t.oPolice], ['nusuk', t.oNusuk]];
+  return `<div class="k-screen k-light k-s-wf" dir="${t.dir}">${sb()}<div class="k-pad">
+    ${head(t.wfTitle)}
+    <h2 class="k-q k-in">${t.wfQ}</h2>
+    <div class="k-wfl k-in">${rows.map(([k, label]) => { const it = MAP[k][0];
+      return `<button class="k-wf ${k === 'camp' ? 'mine' : ''}" data-act="map" data-v="${k}"><i class="k-wf-ic">${ic(MODE_ICON[k],32,1.8)}</i><div class="minw0"><b>${label}</b><span>${k === 'camp' ? itemName(it) : t.nearest + ' · ' + itemName(it)}</span><em>${ic('walk',16)} ${it.d} ${t.mu} · ${fmt(t.walk,{m:it.min})}</em></div>${crowd(it.c)}${ic('chev',22,2,'flip')}</button>`; }).join('')}</div>
+  </div></div>`;
+}
+
+/* ═════════ DESIGN DIRECTIONS ═════════ */
+const MAPC = {
+  khatam:{bg:'#0B201C',mount:'#132A23',tent:'rgba(243,233,210,.16)',tentS:'rgba(243,233,210,.07)',road:'rgba(251,248,241,.13)',road2:'rgba(251,248,241,.11)',metro:'#2FB39A',metroL:'#6FE0C6',poi:'#E8C987',poiF:'rgba(217,180,106,.16)',route:'#E8C987',glow:'rgba(232,201,135,.22)',dot:'#FFF3D6',you:'#5CC8FF',youL:'#BFE8FF',pin:'#D9B46A',pinIn:'#0B201C',label:'rgba(251,248,241,.72)',stroke:'#0B201C',destL:'#FFF3D6'},
+  signal:{bg:'#0A0A0A',mount:'#141414',tent:'rgba(255,255,255,.13)',tentS:'rgba(255,255,255,.05)',road:'rgba(255,255,255,.22)',road2:'rgba(255,255,255,.16)',metro:'#2F80ED',metroL:'#8AB8FF',poi:'#FFD400',poiF:'rgba(255,212,0,.12)',route:'#FFD400',glow:'rgba(255,212,0,.25)',dot:'#000000',you:'#FFFFFF',youL:'#FFFFFF',pin:'#FFD400',pinIn:'#000000',label:'rgba(255,255,255,.85)',stroke:'#0A0A0A',destL:'#FFD400'},
+  dusk:{bg:'#1A1338',mount:'#140F2C',tent:'rgba(255,216,168,.14)',tentS:'rgba(255,216,168,.05)',road:'rgba(255,247,238,.12)',road2:'rgba(255,247,238,.09)',metro:'#B9A7FF',metroL:'#D6CCFF',poi:'#FFD8A8',poiF:'rgba(244,162,89,.16)',route:'#F4A259',glow:'rgba(244,162,89,.3)',dot:'#FFF3E0',you:'#7FDBFF',youL:'#CFF1FF',pin:'#F4A259',pinIn:'#1A1338',label:'rgba(255,247,238,.75)',stroke:'#1A1338',destL:'#FFE3C4'},
+};
+const cur = () => { const L = LANGS.find(l => l.code === shownLang()); return { L, r: T[L.code] }; };
+const demoTag = r => KIOSK ? '' : `<span class="k-demo">${ic('hand',14)}<span data-k="tapDemo">${r.tapDemo}</span></span>`;
+const langRow = (L, r) => `<div class="k-langs">${PRIMARY.map(l => `<button class="k-lp ${l.code === L.code ? 'on' : ''}" data-act="pickLang" data-v="${l.code}" lang="${l.code}">${l.label}</button>`).join('')}<button class="k-lp more ${L.more ? 'on' : ''}" data-act="langs" aria-label="${r.moreLangs}">${ic('globe',16)}<span>+${LANGS.length - PRIMARY.length}</span></button></div>`;
+const scanIcon = s => S.scan === 'ok' ? `<span class="k-ok"><span class="ring">${ic('check',40,2.8)}</span></span>` : `${ic('qr', s, 1.4)}<i class="k-laser"></i>`;
+const hills = () => `<svg class="dk-hills" viewBox="0 0 540 200" preserveAspectRatio="none" aria-hidden="true"><path d="M0 118C60 92 112 102 162 82C206 64 238 72 270 54C302 72 334 64 384 86C432 104 482 92 540 110V200H0Z" fill="rgba(46,24,66,.6)"/><path d="M0 158C80 130 150 150 230 128C300 110 362 140 432 132C482 126 520 140 540 136V200H0Z" fill="#26132F"/><rect x="267.5" y="37" width="5" height="18" rx="1" fill="#FFF3E0" opacity=".9"/></svg>`;
+
+/* Signal: wayfinding signage */
+function vAttractSG() {
+  const { L, r } = cur();
+  return `<div class="k-screen k-s-attract sg-attract">${sb()}
+  <div class="sg-top k-in">
+    <div class="sg-brand"><span class="sg-logo">${emblem(34)}</span><div><b>DALEEL</b><small>دليل · HAJJ WAYFINDING</small></div></div>
+    <div class="sg-board" id="kRot" dir="${r.dir}" lang="${L.code}"><div class="sg-flap" data-k="welcome">${r.welcome}</div><p data-k="welcomeSub">${r.welcomeSub}</p></div>
+  </div>
+  <button class="sg-scan k-in" data-act="scan" aria-label="${r.scan}">
+    <span class="sg-scan-ic">${scanIcon(92)}</span>
+    <span class="sg-scan-txt" id="kRot2" dir="${r.dir}" lang="${L.code}"><b data-k="scan">${r.scan}</b><small data-k="scanHint">${r.scanHint}</small>${demoTag(r)}</span>
+  </button>
+  <div class="sg-arrow" id="kRot3" lang="${L.code}"><span data-k="scannerBelow">${r.scannerBelow}</span><svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M5 13l7 7 7-7"/></svg></div>
+  ${langRow(L, r)}${langSheet()}</div>`;
+}
+function vHubSG() {
+  const t = tt(), np = nextPrayer();
+  return `<div class="k-screen k-s-hub sg-hub" dir="${t.dir}">${sb()}<div class="k-pad">
+    <div class="sg-hub-top k-in"><div class="minw0"><small>${t.greet}</small><h1>${t.pilgrim}</h1></div><button class="sg-end" data-act="go" data-v="attract">${ic('exit',18,2.2,'flip')}<span>${t.endSession}</span></button></div>
+    <div class="sg-strip k-in">
+      <div><small>${t.hajjDays}</small><b>8</b><span>${t.dayNow}</span></div>
+      <div><small>${t.nextPrayer}</small><b data-pr="time">${np.time}</b><span><span data-pr="name">${np.name}</span> · <span data-pr="in">${np.in}</span></span></div>
+      <div class="hot"><small>${t.heat}</small><b>41°</b><span>${t.heatTip}</span></div>
+    </div>
+    <div class="sg-signs k-in">
+      <button class="sg-sign" data-act="go" data-v="wayfinding"><i class="pic">${ic('walk',58,2.2)}</i><div class="minw0"><b>${t.wf}</b><span>${t.wfSub}</span></div><i class="arr">${ic('chev',40,3,'flip')}</i></button>
+      <button class="sg-sign ai" data-act="go" data-v="ai"><div class="k-ava-media"><div class="k-mini-orb"></div>${poster()}<span class="k-talk">${ic('mic',14,2.2)}${t.chatNow}</span></div><div class="minw0"><b>${t.ai}</b><span>${t.aiSub}</span></div><i class="arr">${ic('chev',40,3,'flip')}</i></button>
+    </div>
+    <button class="sg-sos k-in" data-act="go" data-v="emergency"><b>SOS</b><div class="minw0"><strong>${t.em}</strong><span>${t.emSub}</span></div>${ic('chev',30,3,'flip')}</button>
+  </div></div>`;
+}
+
+/* Dusk: voice-first concierge */
+function vAttractDK() {
+  const { L, r } = cur();
+  return `<div class="k-screen k-s-attract dk-attract">${hills()}${sb()}
+  <div class="dk-att">
+    <div class="dk-moon k-in"><div class="dk-moon-core">${emblem(56)}</div></div>
+    <div class="dk-rot k-in" id="kRot" dir="${r.dir}" lang="${L.code}"><h1 data-k="welcome">${r.welcome}</h1><p data-k="welcomeSub">${r.welcomeSub}</p></div>
+    <button class="dk-scan k-in" data-act="scan" aria-label="${r.scan}"><span class="dk-scan-ic">${scanIcon(54)}</span><span class="dk-scan-t" id="kRot2" dir="${r.dir}" lang="${L.code}"><b data-k="scan">${r.scan}</b><small data-k="scanHint">${r.scanHint}</small>${demoTag(r)}</span></button>
+    <div class="k-below dk-below" id="kRot3" lang="${L.code}"><span data-k="scannerBelow">${r.scannerBelow}</span>${ic('down',22,2,'k-chev')}${ic('down',22,2,'k-chev')}</div>
+  </div>
+  ${langRow(L, r)}${langSheet()}</div>`;
+}
+function vHubDK() {
+  const t = tt(), np = nextPrayer();
+  return `<div class="k-screen k-s-hub dk-hub" dir="${t.dir}">${hills()}${sb()}<div class="k-pad">
+    <div class="dk-hub-head k-in"><span class="dk-chip">${t.dayNow}</span><button class="dk-end" data-act="go" data-v="attract">${ic('exit',16,1.9,'flip')}<span>${t.endSession}</span></button></div>
+    <div class="dk-concierge k-in">
+      <button class="dk-ava" data-act="go" data-v="ai" aria-label="${t.ai}"><div class="k-ava-media">${poster()}</div><span class="dk-live"><i></i>${t.chatNow}</span></button>
+      <div class="dk-bubble"><small>${t.greet}</small><b>${t.pilgrim}</b><span>${t.help}</span></div>
+    </div>
+    <div class="dk-replies k-in">
+      <button class="dk-reply" data-act="go" data-v="wayfinding"><i>${ic('pin',24)}</i><b>${t.wf}</b><span>${t.wfSub}</span></button>
+      <button class="dk-reply" data-act="go" data-v="ai"><i>${ic('mic',24)}</i><b>${t.ai}</b><span>${t.aiSub}</span></button>
+      <button class="dk-reply sos" data-act="go" data-v="emergency"><i>SOS</i><b>${t.em}</b><span>${t.emSub}</span></button>
+    </div>
+    <div class="dk-widgets k-in"><div><small>${t.nextPrayer}</small><b><span data-pr="name">${np.name}</span> · <span data-pr="time">${np.time}</span></b><em data-pr="in">${np.in}</em></div><div><small>${t.heat}</small><b>41°C</b><em>${t.heatTip}</em></div></div>
+  </div></div>`;
+}
+function vAttract() { return S.theme === 'signal' ? vAttractSG() : S.theme === 'dusk' ? vAttractDK() : vAttractKH(); }
+function vHub() { return S.theme === 'signal' ? vHubSG() : S.theme === 'dusk' ? vHubDK() : vHubKH(); }
+
+function mapSVG(it) {
+  const t = tt(), C = MAPC[S.theme], ux = 270, uy = 470, mid = Math.round((uy + it.y) / 2);
+  const land = isLand(), VW = land ? 1804 : 540, VH = 826, x0 = land ? (t.dir === 'rtl' ? -928 : -336) : 0;
+  const route = `M${ux} ${uy} V${mid} H${it.x} V${it.y}`;
+  let blocks = '';
+  for (let x = x0 + 24; x < x0 + VW - 40; x += 82) {
+    if (x < 284 && x + 66 > 256) continue;
+    for (let y = 104; y < 800; y += 64) {
+      if (y > 360 && y < 440) continue;
+      if (x > 50 && x < 240 && y < 110) continue;
+      blocks += `<rect x="${x}" y="${y}" width="66" height="46" rx="${S.theme === 'signal' ? 2 : 5}" fill="url(#tp)" stroke="${C.tentS}"/>`;
+    }
+  }
+  const lbl = (x, y, s, c = C.label, sz = 13) => `<text x="${x}" y="${y}" text-anchor="middle" font-size="${sz}" font-weight="600" fill="${c}" style="paint-order:stroke;stroke:${C.stroke};stroke-width:4px">${s}</text>`;
+  return `<svg class="k-mapsvg" viewBox="${x0} 0 ${VW} ${VH}" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs><pattern id="tp" width="9" height="9" patternUnits="userSpaceOnUse"><rect x="1" y="1" width="6" height="6" rx="1" fill="${C.tent}"/></pattern>
+    <radialGradient id="hr"><stop offset="0" stop-color="#E5484D" stop-opacity=".55"/><stop offset="1" stop-color="#E5484D" stop-opacity="0"/></radialGradient>
+    <radialGradient id="ha"><stop offset="0" stop-color="#F0AA3C" stop-opacity=".42"/><stop offset="1" stop-color="#F0AA3C" stop-opacity="0"/></radialGradient></defs>
+    <rect x="${x0}" width="${VW}" height="${VH}" fill="${C.bg}"/>
+    <path transform="translate(${x0} 0)" d="M0 0H58L42 130L70 270L30 430L56 610L24 826H0Z" fill="${C.mount}"/>
+    <path transform="translate(${x0 + VW - 540} 0)" d="M540 0H482L506 150L470 310L508 480L482 650L516 826H540Z" fill="${C.mount}"/>
+    ${blocks}
+    <path d="M270 0V826" stroke="${C.road}" stroke-width="24"/>
+    <path d="M${x0} 420H${x0 + VW}" stroke="${C.road2}" stroke-width="18"/>
+    <path d="M${x0} 790L20 720C160 650 300 590 530 400L${x0 + VW} 120" fill="none" stroke="${C.metro}" stroke-width="4" stroke-dasharray="12 8" opacity=".85"/>
+    <circle cx="352" cy="548" r="8" fill="${C.bg}" stroke="${C.metro}" stroke-width="3"/>${lbl(352, 580, t.metro, C.metroL, 12)}
+    <circle cx="150" cy="64" r="96" fill="url(#hr)"/><circle cx="330" cy="236" r="70" fill="url(#ha)"/>
+    <rect x="74" y="42" width="152" height="44" rx="${S.theme === 'signal' ? 4 : 12}" fill="${C.poiF}" stroke="${C.poi}" stroke-opacity=".6"/>${lbl(150, 69, t.jamarat, C.poi, 14)}
+    <circle cx="430" cy="560" r="16" fill="${C.poiF}" stroke="${C.poi}"/><polygon points="${starPts(430,560,8)}" fill="${C.poi}"/>${lbl(430, 596, t.khaif, C.poi, 12)}
+    <path d="${route}" fill="none" stroke="${C.glow}" stroke-width="16" stroke-linejoin="round" stroke-linecap="round"/>
+    <path class="k-route" d="${route}" fill="none" stroke="${C.route}" stroke-width="${S.theme === 'signal' ? 7 : 5}" stroke-dasharray="3 11" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle r="6" fill="${C.dot}" stroke="${C.route}" stroke-width="2"><animateMotion dur="3s" repeatCount="indefinite" path="${route}"/></circle>
+    <circle cx="${ux}" cy="${uy}" r="22" fill="${C.you}" opacity=".18"><animate attributeName="r" values="14;30;14" dur="2.4s" repeatCount="indefinite"/></circle>
+    <circle cx="${ux}" cy="${uy}" r="9" fill="${C.you}" stroke="${S.theme === 'signal' ? '#000' : '#fff'}" stroke-width="3"/>${lbl(ux, uy + 34, t.youHere, C.youL, 13)}
+    <path d="M${it.x} ${it.y}c-14-16-19-25-19-33a19 19 0 0 1 38 0c0 8-5 17-19 33z" fill="${C.pin}" stroke="${C.stroke}" stroke-width="2"/>
+    <circle cx="${it.x}" cy="${it.y - 33}" r="7" fill="${C.pinIn}"/>${lbl(it.x, it.y - 62, itemName(it), C.destL, 14)}
+  </svg>`;
+}
+
+
+function vMap() {
+  const t = tt(), items = MAP[S.mode], it = items[S.sel], open = S.sheet || isLand();
+  const label = { camp:t.oCamp, hospital:t.oHosp, police:t.oPolice, nusuk:t.oNusuk }[S.mode];
+  return `<div class="k-screen k-dark k-s-map" dir="${t.dir}">${sb()}
+    <div class="k-maphead"><button class="k-back dark" data-act="back" aria-label="${t.back}">${ic('back',24,2.2,'flip')}</button><div class="minw0"><b>${label}</b><span>${itemName(it)} · ${it.d} ${t.mu}</span></div><div class="k-etac">${ic('walk',18,2)}<b>${it.min}</b><small>${t.min}</small></div></div>
+    <div class="k-mapwrap">${mapSVG(it)}
+      <button class="k-phone" data-act="qr">${ic('qr',20)}<span>${t.sendPhone}</span></button>
+      <div class="k-sheet ${open ? '' : 'closed'}"><button class="k-handle" data-act="sheet"><i></i><span>${fmt(t.nearby,{n:items.length})}</span></button>
+        <div class="k-rows">${items.map((x, i) => `<div class="k-row ${i === S.sel ? 'on' : ''}"><i class="k-row-ic">${ic(MODE_ICON[S.mode],22)}</i><div class="minw0"><b>${itemName(x)}</b><span>${x.d} ${t.mu} · ${fmt(t.walk,{m:x.min})}</span></div>${crowd(x.c)}<button class="k-sel" data-act="sel" data-v="${i}">${i === S.sel ? ic('check',14,3) + t.selected : t.select}</button></div>`).join('')}</div>
+      </div>
+      ${S.qr ? `<div class="k-qr"><div class="k-qr-card">${fakeQR()}<p>${t.scanPhone}</p></div><button class="k-close" data-act="qrClose">${t.close}</button></div>` : ''}
+    </div></div>`;
+}
+
+function vAI() {
+  const t = tt(), qs = [t.q1, t.q2, t.q3];
+  if (!aiFallback) return `<div class="k-screen k-dark k-s-ai" dir="${t.dir}">${PAT()}${sb()}
+    <div class="k-ai-top"><button class="k-back dark" data-act="back" aria-label="${t.back}">${ic('back',24,2.2,'flip')}</button><span class="k-ai-chip"><i></i>${t.nm}</span></div>
+    <div class="k-hints" id="kHints"><small>${t.tryAsk}</small>${qs.map(q => `<span>${q}</span>`).join('')}</div>
+    <div class="k-ai-side"><h2>${t.nm}</h2><p>${t.aiHello}. ${t.aiSub2}.</p><small>${t.tryAsk}</small><div class="chips">${qs.map(q => `<span>${q}</span>`).join('')}</div></div>
+  </div>`;
+  return `<div class="k-screen k-dark k-s-ai" dir="${t.dir}">${PAT()}${sb()}<div class="k-pad k-ai-demo">
+    ${head(t.nm, true)}
+    <div class="k-orbw k-in"><div class="k-orb" id="kOrb"><div class="k-orb-img">${emblem(70)}${poster()}</div></div></div>
+    <div class="k-ai-hello k-in"><b>${t.aiHello}</b><span>${t.aiSub2}</span></div>
+    <div class="k-chat" id="kChat"></div>
+    <div class="k-chips"><small>${t.tryAsk}</small><div>${qs.map((q, i) => `<button data-act="ask" data-v="${i}">${q}</button>`).join('')}</div></div>
+    <div class="k-micw"><button class="k-mic" data-act="mic" aria-label="${t.tapMic}">${ic('mic',36,2)}</button><span id="kMicTxt">${t.tapMic}</span></div>
+  </div></div>`;
+}
+
+/* ═════════ LIVE AVATAR LAYER ═════════
+   One iframe that outlives screen changes. On the home screen it sits inside the AI tile as a live
+   preview; opening the AI screen grows the same iframe to full size, so nothing reloads. A tap that
+   lands inside the tile's iframe also opens the AI screen, so tapping "Chat now" there starts at once. */
+// The embed is asked for the layout that matches the kiosk screen: vertical when upright, horizontal when wide.
+const avUrl = () => CONFIG.avatarUrl.split('?')[0] + '?orientation=' + (isLand() ? 'horizontal' : 'vertical');
+const layer = document.createElement('div'); layer.className = 'k-layer off'; $app.appendChild(layer);
+
+let frame = null, frameReady = false;
+function ensureFrame() {
+  if (aiFallback || frame) return;
+  frameReady = false;
+  layer.innerHTML = `<div class="k-ai-load"><div class="k-mini-orb big"></div><span></span></div>`;
+  frame = document.createElement('iframe');
+  layer.style.setProperty('--ar', isLand() ? '1.7778' : '0.5625'); frame.src = avUrl(); frame.allow = 'microphone; camera; autoplay; fullscreen'; frame.title = 'Daleel';
+  frame.addEventListener('load', () => { frameReady = true; layer.classList.add('ready'); layer.querySelector('.k-ai-load')?.classList.add('gone'); });
+  layer.appendChild(frame);
+}
+function resetFrame() { if (frame) { frame.remove(); frame = null; } frameReady = false; layer.innerHTML = ''; layer.className = 'k-layer off'; }
+function relRect(el) { let x = 0, y = 0, e = el; while (e && e !== $app) { x += e.offsetLeft; y += e.offsetTop; e = e.offsetParent; } return { x, y, w: el.offsetWidth, h: el.offsetHeight }; }
+function placeLayer(instant) {
+  let mode = 'off', r = null;
+  if (!aiFallback && S.screen === 'hub') { const m = $view.querySelector('.k-ava-media'); if (m) { ensureFrame(); r = relRect(m); mode = 'tile'; } }
+  else if (!aiFallback && S.screen === 'ai') { ensureFrame(); const land = isLand(), rtl = tt().dir === 'rtl'; r = land ? { x: 0, y: 56, w: 1280, h: 664 } : { x: 0, y: 56, w: 540, h: 904 }; mode = 'full'; }
+  layer.className = 'k-layer ' + mode + (frameReady ? ' ready' : '') + (instant ? ' instant' : '');
+  if (r) Object.assign(layer.style, { left: r.x + 'px', top: r.y + 'px', width: r.w + 'px', height: r.h + 'px' });
+  if (instant) requestAnimationFrame(() => requestAnimationFrame(() => layer.classList.remove('instant')));
+  const sp = layer.querySelector('.k-ai-load span'); if (sp) sp.textContent = tt().loading;
+}
+window.addEventListener('blur', () => setTimeout(() => {
+  if (!frame || document.activeElement !== frame) return;
+  if (S.screen === 'hub') go('ai'); else resetIdle();
+}, 0));
+document.addEventListener('securitypolicyviolation', e => {
+  if (aiFallback || !/embed\.liveavatar/i.test(e.blockedURI || '')) return;
+  aiFallback = true; resetFrame();
+  if (S.screen === 'ai' || S.screen === 'hub') { clearTimers(); aiClear(); render(); }
+});
+
+/* ═════════ AI DEMO CONVERSATION (used only when the embed is blocked) ═════════ */
+let aiT = [];
+const aiClear = () => { aiT.forEach(id => { clearTimeout(id); clearInterval(id); }); aiT = []; };
+const aiLater = (fn, ms) => aiT.push(setTimeout(fn, ms));
+function orb(state) { const o = document.getElementById('kOrb'); if (o) o.className = 'k-orb ' + state; }
+function playQA(i) {
+  aiClear();
+  const chat = document.getElementById('kChat'); if (!chat) return;
+  const t = tt(), q = [t.q1,t.q2,t.q3][i], a = [t.a1,t.a2,t.a3][i];
+  chat.innerHTML = `<div class="k-msg me">${q}</div>`; orb('listen');
+  aiLater(() => { chat.insertAdjacentHTML('beforeend', `<div class="k-msg bot"><span class="k-dots"><i></i><i></i><i></i></span></div>`); orb('think'); }, 1100);
+  aiLater(() => {
+    const el = chat.querySelector('.bot'); if (!el) return;
+    const sep = /\s/.test(a) ? ' ' : '', parts = a.split(sep); let n = 0; orb('talk');
+    const iv = setInterval(() => { n++; el.textContent = parts.slice(0, n).join(sep);
+      if (n >= parts.length) { clearInterval(iv); orb(''); aiLater(() => playQA((i + 1) % 3), 4800); } }, sep ? 120 : 60);
+    aiT.push(iv);
+  }, 2400);
+}
+
+/* ═════════ ROUTER ═════════ */
+const VIEWS = { attract:vAttract, verify:vVerify, hub:vHub, emergency:vEmergency, wayfinding:vWayfinding, map:vMap, ai:vAI };
+const BACK = { verify:'attract', hub:'attract', emergency:'hub', wayfinding:'hub', map:'wayfinding', ai:'hub' };
+let enterT;
+function render(prev) {
+  $app.dataset.lang = shownLang(); $app.dataset.theme = S.theme;
+  $view.innerHTML = VIEWS[S.screen]();
+  placeLayer(!(prev === 'hub' && S.screen === 'ai'));
+  after(); syncShowcase();
+}
+function go(screen) {
+  const prev = S.screen;
+  clearTimers(); aiClear();
+  Object.assign(S, { screen, call:null, sos:false, qr:false, langSheet:false });
+  if (screen === 'attract') Object.assign(S, { scan:'idle', locked:false, rot:0, lang:'ar' });
+  if (screen === 'map') Object.assign(S, { sel:0, sheet:true });
+  if ((prev === 'ai' && screen !== 'ai') || screen === 'attract') resetFrame(); // leaving the AI ends the avatar session
+  $app.classList.add('entering'); clearTimeout(enterT); enterT = setTimeout(() => $app.classList.remove('entering'), 700);
+  render(prev); resetIdle();
+}
+function after() {
+  if (S.screen === 'attract' && S.scan === 'idle' && !S.locked && !S.langSheet) every(rotate, 3400);
+  if (S.screen === 'hub') every(() => { const np = nextPrayer(); ['name','time','in'].forEach(k => { const e = $view.querySelector(`[data-pr="${k}"]`); if (e) e.textContent = np[k]; }); }, 20000);
+  if (S.screen === 'emergency' && !S.sos) bindSOS();
+  if (S.screen === 'ai') {
+    if (!aiFallback) later(() => document.getElementById('kHints')?.classList.add('gone'), 10000);
+    else later(() => playQA(0), 900);
+  }
+}
+function rotate() {
+  S.rot = (S.rot + 1) % LANGS.length;
+  const L = LANGS[S.rot], r = T[L.code];
+  $app.dataset.lang = L.code;
+  ['kRot','kRot2','kRot3'].forEach(id => { const el = document.getElementById(id); if (!el) return;
+    el.dir = r.dir; el.lang = L.code;
+    el.querySelectorAll('[data-k]').forEach(n => n.textContent = r[n.dataset.k]);
+    el.classList.remove('k-fade'); void el.offsetWidth; el.classList.add('k-fade'); });
+  $view.querySelectorAll('.k-lp[data-v]').forEach(b => b.classList.toggle('on', b.dataset.v === L.code));
+  $view.querySelector('.k-lp.more')?.classList.toggle('on', !!L.more);
+  syncShowcase();
+}
+
+/* SOS press-and-hold */
+function bindSOS() {
+  const btn = document.getElementById('kSos'), ring = document.getElementById('kRing'), txt = document.getElementById('kSosTxt');
+  const C = 879.6; let start = 0, raf = 0;
+  const set = p => ring.style.strokeDashoffset = C * (1 - p);
+  const tick = ts => { if (!start) start = ts; const p = Math.min(1, (ts - start) / CONFIG.sosHoldMs); set(p);
+    if (p >= 1) { stop(false); fire(); } else raf = requestAnimationFrame(tick); };
+  const begin = e => { e.preventDefault(); btn.setPointerCapture?.(e.pointerId); start = 0; btn.classList.add('hold'); txt.textContent = tt().sosHolding; raf = requestAnimationFrame(tick); };
+  const stop = (reset = true) => { cancelAnimationFrame(raf); btn.classList.remove('hold'); txt.textContent = tt().sosHold; if (reset) { ring.style.transition = 'stroke-dashoffset .35s'; set(0); setTimeout(() => ring.style.transition = '', 360); } };
+  const fire = () => {
+    // TODO: send the alert to your dispatch backend here (kiosk ID, location, pilgrim ID, language)
+    console.log('[SOS]', { kiosk:'K-12', lang:S.lang, at:new Date().toISOString() });
+    S.sos = true; render();
+  };
+  btn.addEventListener('pointerdown', begin);
+  ['pointerup','pointercancel','lostpointercapture'].forEach(ev => btn.addEventListener(ev, () => stop()));
+}
+
+/* Taps */
+$app.addEventListener('click', e => {
+  const el = e.target.closest('[data-act]'); if (!el || !$app.contains(el)) return;
+  const a = el.dataset.act, v = el.dataset.v;
+  switch (a) {
+    case 'go': go(v); break;
+    case 'back': go(BACK[S.screen] || 'attract'); break;
+    case 'scan':
+      if (S.scan !== 'idle') return;
+      clearTimers(); S.lang = shownLang();
+      S.scan = 'ok'; render(); later(() => go('verify'), 1100); break;
+    case 'langs': clearTimers(); S.langSheet = true; render(); break;
+    case 'closeLangs': S.langSheet = false; render(); break;
+    case 'pickLang':
+      if (S.screen === 'attract') { clearTimers(); S.locked = true; }
+      S.lang = v; S.langSheet = false; render(); break;
+    case 'map': S.mode = v; go('map'); break;
+    case 'sel': S.sel = +v; render(); break;
+    case 'sheet': if (isLand()) break; S.sheet = !S.sheet; $view.querySelector('.k-sheet')?.classList.toggle('closed', !S.sheet); break;
+    case 'qr': S.qr = true; render(); break;
+    case 'qrClose': S.qr = false; render(); break;
+    case 'call':
+      // TODO: connect to your telephony / intercom integration here
+      S.call = v; render(); break;
+    case 'endCall': S.call = null; render(); break;
+    case 'cancelSos': S.sos = false; render(); break;
+    case 'ask': playQA(+v); break;
+    case 'mic': { aiClear(); orb('listen'); const m = document.getElementById('kMicTxt'); if (m) m.textContent = tt().listening;
+      const next = Math.floor(Math.random() * 3); aiLater(() => { if (m) m.textContent = tt().tapMic; playQA(next); }, 1500); break; }
+  }
+});
+
+/* ═════════ IDLE RESET (privacy) ═════════ */
+let idleT, warnT, warnEl;
+function resetIdle() {
+  clearTimeout(idleT); clearInterval(warnT); warnEl?.remove(); warnEl = null;
+  if (S.screen === 'attract') return;
+  idleT = setTimeout(warn, S.screen === 'ai' ? CONFIG.idleAI : (KIOSK ? CONFIG.idleKiosk : CONFIG.idleShowcase));
+}
+function warn() {
+  let n = CONFIG.warnSec; const t = tt();
+  warnEl = document.createElement('div'); warnEl.className = 'k-idle'; warnEl.dir = t.dir;
+  warnEl.innerHTML = `<div class="k-idle-card"><div class="n">${n}</div><b>${t.idleQ}</b><button>${t.idleBtn}</button></div>`;
+  warnEl.querySelector('button').onclick = ev => { ev.stopPropagation(); resetIdle(); };
+  $app.appendChild(warnEl);
+  warnT = setInterval(() => { n--; const c = warnEl?.querySelector('.n'); if (c) c.textContent = n; if (n <= 0) { clearInterval(warnT); go('attract'); } }, 1000);
+}
+['pointerdown','keydown','touchstart'].forEach(ev => $app.addEventListener(ev, () => { if (!warnEl) resetIdle(); }, { passive:true }));
+setInterval(() => $app.querySelectorAll('[data-clock]').forEach(e => e.textContent = clock()), 15000);
+
+/* ═════════ SHOWCASE CONTROLS ═════════ */
+const stepsEl = document.getElementById('steps'), langsEl = document.getElementById('langs');
+langsEl.innerHTML = LANGS.map(l => `<button data-lang="${l.code}" lang="${l.code}">${l.label}</button>`).join('');
+stepsEl.addEventListener('click', e => { const b = e.target.closest('[data-step]'); if (!b) return;
+  const lang = S.lang; go(b.dataset.step); if (b.dataset.step !== 'attract') { S.lang = lang; render(); } });
+langsEl.addEventListener('click', e => { const b = e.target.closest('[data-lang]'); if (!b) return;
+  if (S.screen === 'attract') { clearTimers(); S.locked = true; }
+  S.lang = b.dataset.lang; S.langSheet = false; render(); });
+function syncShowcase() {
+  document.querySelectorAll('[data-design]').forEach(b => b.classList.toggle('on', b.dataset.design === S.theme));
+  stepsEl.querySelectorAll('[data-step]').forEach(b => b.classList.toggle('on', b.dataset.step === S.screen));
+  const shown = shownLang();
+  langsEl.querySelectorAll('[data-lang]').forEach(b => b.classList.toggle('on', b.dataset.lang === shown));
+}
+const designsEl = document.getElementById('designs'), pvDesign = document.getElementById('pvDesign');
+function setTheme(id) { if (id === S.theme) return; S.theme = id; clearTimers(); aiClear(); render(); }
+[designsEl, pvDesign].forEach(el => el.addEventListener('click', e => { const b = e.target.closest('[data-design]'); if (b) { setTheme(b.dataset.design); pvWake?.(); } }));
+if (CONFIG.kioskLogo) document.getElementById('tWord').innerHTML = `<img src="${CONFIG.kioskLogo}" alt="">`;
+
+/* ═════════ FULL-SCREEN DEMO (portrait or landscape) ═════════ */
+const bezel = document.getElementById('bezel'), pvBar = document.getElementById('pvBar'), pvOrient = document.getElementById('pvOrient');
+let presenting = false, fsSeen = false, pvTimer;
+const wantLand = () => S.orient === 'auto' ? innerWidth > innerHeight : S.orient === 'landscape';
+function updateOrientBtn() { pvOrient.querySelector('span').textContent = isLand() ? G().portrait : G().landscape; }
+function enterPresent() {
+  presenting = true; resetFrame();
+  document.body.classList.add('present'); document.body.appendChild($app);
+  if (!KIOSK) document.documentElement.requestFullscreen?.().catch(() => {});
+  fit(); render(); pvWake();
+}
+function exitPresent() {
+  if (!presenting) return;
+  presenting = false; fsSeen = false; resetFrame(); S.orient = 'auto';
+  document.body.classList.remove('present'); bezel.insertBefore($app, bezel.firstChild);
+  $app.style.transform = ''; $app.classList.remove('land');
+  if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
+  fit(); render();
+}
+function pvWake() { pvBar.classList.remove('idle'); clearTimeout(pvTimer); pvTimer = setTimeout(() => pvBar.classList.add('idle'), 3000); }
+document.getElementById('openDemo').addEventListener('click', enterPresent);
+document.getElementById('pvExit').addEventListener('click', exitPresent);
+pvOrient.addEventListener('click', () => { S.orient = isLand() ? 'portrait' : 'landscape'; fit(); pvWake(); });
+addEventListener('mousemove', () => { if (presenting) pvWake(); });
+addEventListener('keydown', e => { if (e.key === 'Escape' && presenting && !KIOSK) exitPresent(); });
+document.addEventListener('fullscreenchange', () => { if (document.fullscreenElement) fsSeen = true; else if (fsSeen && presenting && !KIOSK) exitPresent(); });
+
+/* ═════════ PRESENTATION PAGE COPY (English / Arabic) ═════════ */
+const PAGE = {
+en: {
+  dir:'ltr', brand:'Daleel', brandSub:'Smart Hajj kiosk', proto:'Interactive prototype',
+  eyebrow:'A smart kiosk for the pilgrims of Mina',
+  h1:'Every pilgrim, guided in <em>their own language</em>.',
+  lead:'Daleel turns one touchscreen into a multilingual guide, a walking map, an emergency line and a live AI companion. A pilgrim scans their Nusuk card and, within seconds, knows where their camp is, when the next prayer is, and how to get help.',
+  cta:'Full-screen demo', ctaNote:'Opens in portrait or landscape to match your screen',
+  designsH:'Choose a design direction', stepsH:'Walk through the pilgrim’s journey', kioskLang:'Kiosk language',
+  tip:'The kiosk screen is live. Tap it as a pilgrim would, or jump to any step.',
+  portrait:'Portrait', landscape:'Landscape', exit:'Exit demo',
+  steps:[
+    ['attract','Welcome and scan','Greets in 12 languages, starts with a Nusuk card'],
+    ['verify','Identity','Confirms the pilgrim and their camp'],
+    ['hub','Services','Hajj day, prayer time, heat alert'],
+    ['emergency','Emergency','Hold-to-alert SOS and direct lines'],
+    ['wayfinding','Wayfinding','Camp, hospital, police, Nusuk Care'],
+    ['map','Live map','Route, walking time, crowd levels'],
+    ['ai','AI guide','A live avatar that answers by voice'],
+  ],
+  designs:{ khatam:['Khatam','Emerald and gold, built on the eight-point star of Islamic geometry.'], signal:['Signal','Airport-style wayfinding signage. High contrast, readable in full sun and for low vision.'], dusk:['Dusk','A voice-first concierge under the evening sky over Arafat.'] },
+  stats:[['12','languages, with right-to-left layouts for Arabic, Urdu and Persian'],['1 scan','from a Nusuk card to a personal welcome, with no typing'],['3 sec','press-and-hold sends an SOS with the kiosk’s exact location'],['0','personal details left on screen once the visit ends']],
+  whyH:'Built for the realities of Hajj',
+  whyP:'Millions of pilgrims arrive speaking dozens of languages, in extreme heat, among thousands of near-identical tents. Daleel is designed for exactly those conditions.',
+  why:[
+    ['globe','Language barriers','Many pilgrims cannot read Arabic or English signs. Daleel speaks to each pilgrim in their own language from the first screen, and the AI guide understands spoken questions.'],
+    ['tent','Getting lost in Mina','Camps look alike and are spread across sectors. Daleel knows the pilgrim’s camp from their Nusuk card and draws the walking route from the kiosk to the tent.'],
+    ['thermo','Heat and health','Heat exhaustion is one of the most common emergencies of the season. The home screen shows heat advice, and help is always one press away.'],
+    ['care','Crowded help desks','Staff spend their day answering the same questions. Daleel answers them around the clock, so staff can focus on pilgrims who need a person.'],
+  ],
+  tourH:'What the pilgrim sees, step by step',
+  tourP:'Every step below runs live on the kiosk above. Select “Show on kiosk” to see it.',
+  show:'Show on kiosk', why1:'Why it helps',
+  tour:[
+    ['attract','A welcome in their language','The screen greets passers-by in twelve languages in turn. Pilgrims tap their own language, or simply scan the QR code on their Nusuk card.','No menus to decode before getting help.'],
+    ['verify','Identity confirmed in one scan','The pilgrim’s name, nationality, camp and Hajj provider appear on a digital Nusuk card, with the option to switch language.','Every answer that follows is personal to that pilgrim.'],
+    ['hub','Today, at a glance','The home screen shows the current day of Hajj and its rite, the next prayer with a live countdown, and a heat alert with practical advice.','Pilgrims keep pace with the rites and stay safe in the heat.'],
+    ['emergency','Help that cannot be pressed by accident','Holding the SOS button for three seconds sends an alert with the kiosk’s exact location. Direct lines reach the unified emergency number, the Red Crescent, the pilgrim’s Hajj provider and Nusuk Care.','Responders know where to go before the call is over.'],
+    ['wayfinding','Where to go next','One tap shows the way to the pilgrim’s own camp, or the nearest hospital, police post or Nusuk Care center, with distance and walking time.','Lost pilgrims find their way without a phone or a translator.'],
+    ['map','A route they can follow','The map draws the walking route from the kiosk, marks landmarks such as the Jamarat and Al-Khaif Mosque, shows crowd levels, and sends the route to the pilgrim’s phone by QR code.','The guidance goes with them after they leave the kiosk.'],
+    ['ai','A guide they can talk to','Daleel’s live avatar answers spoken questions about rites, places and health in the pilgrim’s language. One tap on the avatar on the home screen starts the conversation.','A human conversation for questions no menu can predict.'],
+  ],
+  opsH:'Ready for operations',
+  opsP:'Designed to run unattended on the streets of Mina and to connect to the systems already in place.',
+  ops:[
+    ['shield','Private by default','Each session closes after a short idle countdown, and the avatar conversation ends when the pilgrim leaves, so the next visitor starts fresh.'],
+    ['rotate','Portrait or landscape','Every screen has a layout for upright totems and for wide wall screens, and it switches automatically when the display rotates.'],
+    ['phone','Built to connect','The SOS alert, phone lines, Nusuk identity and crowd data are ready to connect to existing dispatch, telephony and Nusuk systems.'],
+    ['dome','Three design directions','Khatam, Signal and Dusk share the same features, so the choice is about identity and setting, not capability.'],
+  ],
+  specs:['9:16 or 16:9 touchscreen','Nusuk QR scanner','Microphone and speaker for voice AI','Runs in a standard browser in kiosk mode'],
+  foot1:'Prototype with demo data. Names, places, times and phone lines are examples.',
+  foot2:'Full-screen kiosk view: add <code>#kiosk</code> to the page address.',
+},
+ar: {
+  dir:'rtl', brand:'دليل', brandSub:'كشك الحج الذكي', proto:'نموذج تفاعلي',
+  eyebrow:'كشك ذكي لحجاج منى',
+  h1:'كل حاجّ يجد طريقه <em>بلغته</em>.',
+  lead:'يحوّل «دليل» شاشة لمس واحدة إلى مرشد متعدد اللغات، وخريطة للمشي، وخط للطوارئ، ورفيق ذكي مباشر. يمسح الحاج بطاقة نسك، فيعرف خلال ثوانٍ أين مخيمه، ومتى الصلاة القادمة، وكيف يطلب المساعدة.',
+  cta:'عرض بملء الشاشة', ctaNote:'يُفتح عموديًا أو أفقيًا بما يناسب شاشتك',
+  designsH:'اختر اتجاه التصميم', stepsH:'رحلة الحاج خطوة بخطوة', kioskLang:'لغة الكشك',
+  tip:'شاشة الكشك تفاعلية. المسها كما يفعل الحاج، أو انتقل إلى أي خطوة.',
+  portrait:'عمودي', landscape:'أفقي', exit:'إنهاء العرض',
+  steps:[
+    ['attract','الترحيب والمسح','ترحيب بـ12 لغة والبدء ببطاقة نسك'],
+    ['verify','التحقق من الهوية','تأكيد بيانات الحاج ومخيمه'],
+    ['hub','الخدمات','يوم الحج، وقت الصلاة، تنبيه الحرارة'],
+    ['emergency','الطوارئ','استغاثة بالضغط المطوّل وخطوط مباشرة'],
+    ['wayfinding','الإرشاد للطريق','المخيم، المستشفى، الشرطة، نسك عناية'],
+    ['map','الخريطة الحية','المسار، زمن المشي، مستوى الازدحام'],
+    ['ai','المرشد الذكي','أفاتار مباشر يجيب بالصوت'],
+  ],
+  designs:{ khatam:['خاتم','الأخضر الزمردي والذهبي، مستوحى من النجمة الثمانية في الزخرفة الإسلامية.'], signal:['إشارة','بأسلوب لوحات الإرشاد في المطارات. تباين عالٍ يُقرأ تحت الشمس الساطعة ولضعاف البصر.'], dusk:['غسق','مرشد صوتي أولًا تحت سماء المساء فوق عرفات.'] },
+  stats:[['12','لغة، مع واجهات من اليمين إلى اليسار للعربية والأردية والفارسية'],['مسحة واحدة','من بطاقة نسك إلى ترحيب شخصي، دون أي كتابة'],['3 ثوانٍ','من الضغط المطوّل ترسل استغاثة بموقع الكشك الدقيق'],['0','بيانات شخصية تبقى على الشاشة بعد انتهاء الزيارة']],
+  whyH:'مصمَّم لواقع الحج',
+  whyP:'يصل ملايين الحجاج بعشرات اللغات، في حرّ شديد، وبين آلاف الخيام المتشابهة. صُمّم «دليل» لهذه الظروف تحديدًا.',
+  why:[
+    ['globe','حاجز اللغة','كثير من الحجاج لا يقرؤون اللوحات العربية أو الإنجليزية. يخاطب «دليل» كل حاج بلغته من الشاشة الأولى، ويفهم المرشد الذكي الأسئلة المنطوقة.'],
+    ['tent','التيه في منى','تتشابه المخيمات وتتوزع على قطاعات. يعرف «دليل» مخيم الحاج من بطاقة نسك، ويرسم مسار المشي من الكشك حتى الخيمة.'],
+    ['thermo','الحرارة والصحة','الإجهاد الحراري من أكثر الحالات الطارئة شيوعًا في الموسم. تعرض الشاشة الرئيسية نصائح الحرارة، والمساعدة دائمًا على بُعد ضغطة.'],
+    ['care','ازدحام مكاتب الخدمة','يقضي الموظفون يومهم في الإجابة عن الأسئلة نفسها. يجيب «دليل» عنها على مدار الساعة، ليتفرغ الموظفون لمن يحتاج إلى شخص.'],
+  ],
+  tourH:'ما يراه الحاج، خطوة بخطوة',
+  tourP:'كل خطوة أدناه تعمل مباشرة على الكشك في الأعلى. اختر «اعرضها على الكشك» لمشاهدتها.',
+  show:'اعرضها على الكشك', why1:'الفائدة',
+  tour:[
+    ['attract','ترحيب بلغته','ترحّب الشاشة بالمارّة باثنتي عشرة لغة بالتناوب. يختار الحاج لغته بلمسة، أو يمسح رمز QR على بطاقة نسك مباشرة.','لا قوائم معقدة قبل الوصول إلى المساعدة.'],
+    ['verify','التحقق بمسحة واحدة','يظهر اسم الحاج وجنسيته ومخيمه وشركة الحج على بطاقة نسك رقمية، مع إمكانية تغيير اللغة.','كل إجابة بعدها مخصّصة لهذا الحاج.'],
+    ['hub','يومه في لمحة','تعرض الشاشة الرئيسية يوم الحج الحالي ومنسكه، والصلاة القادمة مع عدّ تنازلي مباشر، وتنبيه الحرارة مع نصيحة عملية.','يبقى الحاج ملتزمًا بمواعيد المناسك وآمنًا من الحر.'],
+    ['emergency','مساعدة لا تُضغط بالخطأ','الضغط المطوّل على زر الاستغاثة ثلاث ثوانٍ يرسل بلاغًا بموقع الكشك الدقيق. وتصل الخطوط المباشرة إلى الطوارئ الموحد والهلال الأحمر وشركة الحج ونسك عناية.','يعرف المسعفون وجهتهم قبل انتهاء المكالمة.'],
+    ['wayfinding','إلى أين بعد ذلك','بلمسة واحدة يظهر الطريق إلى مخيم الحاج، أو إلى أقرب مستشفى أو مركز شرطة أو مركز نسك عناية، مع المسافة وزمن المشي.','يجد التائه طريقه دون هاتف أو مترجم.'],
+    ['map','مسار يمكن اتباعه','ترسم الخريطة مسار المشي من الكشك، وتُظهر معالم مثل الجمرات ومسجد الخيف، ومستوى الازدحام، وترسل المسار إلى جوال الحاج عبر رمز QR.','يرافقه الإرشاد بعد مغادرة الكشك.'],
+    ['ai','مرشد يمكن محادثته','يجيب أفاتار «دليل» المباشر عن الأسئلة المنطوقة حول المناسك والأماكن والصحة بلغة الحاج. ولمسة واحدة على الأفاتار في الشاشة الرئيسية تبدأ المحادثة.','محادثة إنسانية لأسئلة لا تتوقعها أي قائمة.'],
+  ],
+  opsH:'جاهز للتشغيل',
+  opsP:'مصمَّم ليعمل دون إشراف في شوارع منى، وليرتبط بالأنظمة القائمة.',
+  ops:[
+    ['shield','الخصوصية أولًا','تُغلق كل جلسة بعد عدّ تنازلي قصير عند عدم الاستخدام، وتنتهي محادثة الأفاتار عند مغادرة الحاج، فيبدأ الزائر التالي من جديد.'],
+    ['rotate','عمودي أو أفقي','لكل شاشة تصميم للأكشاك العمودية وللشاشات الجدارية العريضة، ويتبدّل تلقائيًا عند تدوير الشاشة.'],
+    ['phone','جاهز للربط','الاستغاثة وخطوط الاتصال وهوية نسك وبيانات الازدحام جاهزة للربط مع أنظمة البلاغات والاتصالات ونسك القائمة.'],
+    ['dome','ثلاثة اتجاهات تصميم','تشترك تصاميم خاتم وإشارة وغسق في الميزات نفسها، فالاختيار يتعلق بالهوية والبيئة لا بالقدرات.'],
+  ],
+  specs:['شاشة لمس 9:16 أو 16:9','ماسح QR لبطاقة نسك','ميكروفون ومكبّر صوت للمرشد الصوتي','يعمل على متصفح عادي في وضع الكشك'],
+  foot1:'نموذج ببيانات تجريبية. الأسماء والأماكن والأوقات وأرقام الاتصال أمثلة.',
+  foot2:'عرض الكشك بملء الشاشة: أضف <code dir="ltr">#kiosk</code> إلى عنوان الصفحة.',
+},
+};
+I.rotate = '<rect x="7" y="3" width="10" height="18" rx="2"/><path d="M3 12a9 9 0 0 1 3-6.7M21 12a9 9 0 0 1-3 6.7"/>';
+let GL = 'en';
+const G = () => PAGE[GL];
+const showcaseEl = document.querySelector('.showcase');
+function applyGuide(lang, syncKiosk) {
+  GL = lang; const g = G();
+  showcaseEl.dir = g.dir; showcaseEl.lang = lang;
+  document.title = lang === 'ar' ? 'كشك دليل للحج' : 'Daleel Hajj Kiosk';
+  showcaseEl.querySelectorAll('[data-g]').forEach(el => el.textContent = g[el.dataset.g]);
+  showcaseEl.querySelectorAll('[data-gh]').forEach(el => el.innerHTML = g[el.dataset.gh]);
+  document.querySelectorAll('[data-glang]').forEach(b => b.classList.toggle('on', b.dataset.glang === lang));
+  stepsEl.innerHTML = g.steps.map(([k, l, s], i) => `<li><button data-step="${k}"><span class="n">${i + 1}</span><span class="minw0"><span class="lbl">${l}</span></span><span class="sub">${s}</span></button></li>`).join('');
+  designsEl.innerHTML = DESIGNS.map(d => `<button data-design="${d.id}"><span class="sw">${d.sw.map(c => `<i style="background:${c}"></i>`).join('')}</span><b>${g.designs[d.id][0]}</b><span>${g.designs[d.id][1]}</span></button>`).join('');
+  pvDesign.innerHTML = DESIGNS.map(d => `<button data-design="${d.id}">${g.designs[d.id][0]}</button>`).join('');
+  document.querySelector('#pvExit span').textContent = g.exit;
+  document.getElementById('stats').innerHTML = g.stats.map(([n, l]) => `<div><b>${n}</b><span>${l}</span></div>`).join('');
+  document.getElementById('why').innerHTML = g.why.map(([i, h, p]) => `<div class="card">${ic(i, 26, 1.6)}<h3>${h}</h3><p>${p}</p></div>`).join('');
+  document.getElementById('tour').innerHTML = g.tour.map(([k, h, p, b], i) => `<li><span class="tn">${String(i + 1).padStart(2, '0')}</span><div class="minw0"><h3>${h}</h3><p>${p}</p><p class="ben"><b>${g.why1}</b>${b}</p></div><button class="tshow" data-step="${k}">${g.show}${ic('chev', 16, 2.2, 'flip')}</button></li>`).join('');
+  document.getElementById('ops').innerHTML = g.ops.map(([i, h, p]) => `<div class="card">${ic(i, 26, 1.6)}<h3>${h}</h3><p>${p}</p></div>`).join('');
+  document.getElementById('specs').innerHTML = g.specs.map(s => `<span>${s}</span>`).join('');
+  if (syncKiosk) { if (S.screen === 'attract') { clearTimers(); S.locked = true; } S.lang = lang; S.langSheet = false; render(); }
+  syncShowcase(); updateOrientBtn();
+  try { localStorage.setItem('daleel-guide-lang', lang); } catch (e) {}
+}
+document.querySelectorAll('[data-glang]').forEach(b => b.addEventListener('click', () => applyGuide(b.dataset.glang, true)));
+document.getElementById('tour').addEventListener('click', e => {
+  const b = e.target.closest('[data-step]'); if (!b) return;
+  const lang = S.lang; go(b.dataset.step); if (b.dataset.step !== 'attract') { S.lang = lang; render(); }
+  kcol.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' });
+});
+
+/* ═════════ SCALING ═════════ */
+const fitEl = document.getElementById('fit'), totem = document.getElementById('totem'), kcol = document.getElementById('kcol');
+function fit() {
+  if (presenting) {
+    const want = wantLand();
+    if (want !== isLand()) { $app.classList.toggle('land', want); resetFrame(); render(); }
+    const W = isLand() ? 1280 : 540, H = isLand() ? 720 : 960, s = Math.min(innerWidth / W, innerHeight / H);
+    $app.style.transform = `translate(-50%,-50%) scale(${s})`; updateOrientBtn(); return;
+  }
+  const W = 660, H = 1360, wide = innerWidth > 980;
+  const s = wide ? Math.min((innerHeight - 130) / H, (innerWidth * 0.46) / W, 0.86) : Math.min(kcol.clientWidth / (W + 40), 0.62);
+  const sc = Math.max(0.3, s);
+  fitEl.style.width = W * sc + 'px'; fitEl.style.height = H * sc + 'px'; totem.style.transform = `scale(${sc})`;
+}
+if (KIOSK) {
+  document.body.classList.add('kiosk');
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('keydown', e => { if (e.key === 'f' || e.key === 'F') { document.fullscreenElement ? document.exitFullscreen?.() : document.documentElement.requestFullscreen?.().catch(() => {}); } });
+  enterPresent();
+}
+addEventListener('resize', () => { fit(); placeLayer(true); });
+addEventListener('hashchange', () => location.reload());
+document.fonts?.ready.then(() => placeLayer(true));
+let startGL = HASH === 'ar' ? 'ar' : 'en';
+try { const v = localStorage.getItem('daleel-guide-lang'); if (v && HASH !== 'en' && HASH !== 'ar') startGL = v === 'ar' ? 'ar' : 'en'; } catch (e) {}
+applyGuide(startGL, false);
+fit();
+go('attract');
+
+</script>
+
+</html>
